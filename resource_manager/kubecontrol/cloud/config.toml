@@ -89,6 +89,15 @@ version = 2
 
       [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
 
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.wasmtime]
+          base_runtime_spec = ""
+          container_annotations = []
+          pod_annotations = []
+          privileged_without_host_devices = false
+          runtime_engine = ""
+          runtime_root = ""
+          runtime_type = "io.containerd.wasmtime.v1"
+
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
           base_runtime_spec = ""
           container_annotations = []

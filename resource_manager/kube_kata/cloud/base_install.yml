@@ -88,7 +88,7 @@
 
     - name: Get Kubernetes binaries from host machine
       copy:
-        src: /mnt/sdb/matthijs/kubernetes-node-linux-amd64-{{ kubeversionstrp }}.tar.gz
+        src: /mnt/sdb/mkozub/kubernetes-node-linux-amd64-{{ kubeversionstrp }}.tar.gz
         dest: /tmp/kubernetes-node-linux-amd64.tar.gz
 
     - name: Extract Kubernetes binary archive

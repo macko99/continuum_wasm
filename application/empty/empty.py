@@ -17,8 +17,8 @@ def set_container_location(config):
     Args:
         config (dict): Parsed configuration
     """
-    source = "redplanet00/kubeedge-applications"
-    config["images"] = {"worker": "%s:empty" % (source)}
+    source = "macko99vu/wasmgo"
+    config["images"] = {"worker": "%s:latest" % (source)}
 
 
 def add_options(_config):
@@ -60,7 +60,7 @@ def cache_worker(_config, _machines):
         (dict): Application variables
     """
     app_vars = {
-        "sleep_time": 30,
+        "sleep_time": 60,
     }
     return app_vars
 
@@ -484,12 +484,12 @@ def fill_control(config, control, starttime, worker_output, worker_description):
     # 17_app_start: First print in the application
     for pod, output in worker_output:
         for line in output:
-            if "Start the application" in line:
+            if "Hello, World!" in line:
                 if config["infrastructure"]["provider"] == "qemu":
-                    # Example: 2023-09-03T11:50:03.183541380+02:00 Start the application
+                    # Example: 2023-09-03T11:50:03.183541380+02:00 Hello, World!
                     dt = line.split("+")[0]
                 elif config["infrastructure"]["provider"] == "gcp":
-                    # Example: 2023-09-03T11:50:03.183541380Z Start the application
+                    # Example: 2023-09-03T11:50:03.183541380Z Hello, World!
                     dt = line.split("Z")[0]
 
                 dt = dt.replace("T", " ")
@@ -596,7 +596,7 @@ def print_resources(config, df):
     """Modify the resource dataframe and save it to csv
 
     Example:
-    timestamp cloud0matthijs_cpu  cloud0matthijs_memory  cloudcontrollermatthijs_cpu   ...
+    timestamp cloud0mkozub_cpu  cloud0mkozub_memory  cloudcontrollermkozub_cpu   ...
     0.359692                 103                    419                         1481   ...
     0.534534                 103                    419                         1481   ...
     0.934234                 103                    419                         1481   ...

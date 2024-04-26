@@ -34,6 +34,14 @@
         path: /etc/containerd
         state: directory
 
+    - name: Copy wasmtime runtime from local to target
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim-wasmtime-v1"
+        dest: /bin/containerd-shim-wasmtime-v1
+    
+    - name: Make new wasm shim executable
+      command: chmod +x /bin/containerd-shim-wasmtime-v1
+
     - name: Copy containerd config from local to target
       copy:
         src: "{{ continuum_home }}/cloud/config.toml"
@@ -94,7 +102,7 @@
 
     - name: Get Kubernetes binaries from host machine
       copy:
-        src: /mnt/sdb/matthijs/kubernetes-node-linux-amd64-{{ kubeversionstrp }}.tar.gz
+        src: /mnt/sdb/mkozub/kubernetes-node-linux-amd64-{{ kubeversionstrp }}.tar.gz
         dest: /tmp/kubernetes-node-linux-amd64.tar.gz
 
     - name: Extract Kubernetes binary archive

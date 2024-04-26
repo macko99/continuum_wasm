@@ -132,7 +132,7 @@ def main(args):
             for line in output:
                 # Example header and line (header is not printed in our command)
                 # NAME                      CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
-                # cloud0matthijs            54m          0%     588Mi           1%
+                # cloud0mkozub            54m          0%     588Mi           1%
                 if line[1][-1] != "m":
                     logging.error("Expected CPU to be measured in m, was: %s", line[1])
                     sys.exit()
@@ -157,7 +157,7 @@ def main(args):
 
                 # Example header and line (header is not printed in our command)
                 # NAME                                              CPU(cores)   MEMORY(bytes)
-                # etcd-cloudcontrollermatthijs                      33m          38Mi
+                # etcd-cloudcontrollermkozub                      33m          38Mi
                 if line[1][-1] != "m":
                     logging.error("Expected CPU to be measured in m, was: %s", line[1])
                     sys.exit()

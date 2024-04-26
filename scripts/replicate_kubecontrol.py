@@ -37,7 +37,7 @@ class MicroBenchmark(replicate_paper.Experiment):
 
         # All nodes used locally - used to kill all VMs to preven IP clashing
         self.nodes = ["node1", "node3", "node4"]
-        self.username = "matthijs"
+        self.username = "mkozub"
         self.infrastructure = args.infrastructure
 
         # Save all files that only need re-plotting here
@@ -371,7 +371,7 @@ def main(args):
     exp.check_resume()
     exp.run_commands()
 
-    command = ["terraform", "-chdir=/home/matthijs/.continuum/images", "destroy", "--auto-approve"]
+    command = ["terraform", "-chdir=/home/mkozub/.continuum/images", "destroy", "--auto-approve"]
     replicate_paper.execute(command)
 
     exp.parse_output()
