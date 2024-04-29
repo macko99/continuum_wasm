@@ -98,6 +98,24 @@ version = 2
           runtime_root = ""
           runtime_type = "io.containerd.wasmtime.v1"
 
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.wasmer]
+          base_runtime_spec = ""
+          container_annotations = []
+          pod_annotations = []
+          privileged_without_host_devices = false
+          runtime_engine = ""
+          runtime_root = ""
+          runtime_type = "io.containerd.wasmer.v1"
+
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.wasmedge]
+          base_runtime_spec = ""
+          container_annotations = []
+          pod_annotations = []
+          privileged_without_host_devices = false
+          runtime_engine = ""
+          runtime_root = ""
+          runtime_type = "io.containerd.wasmedge.v1"
+
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
           base_runtime_spec = ""
           container_annotations = []

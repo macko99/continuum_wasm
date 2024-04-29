@@ -38,9 +38,25 @@
       copy:
         src: "{{ continuum_home }}/cloud/containerd-shim-wasmtime-v1"
         dest: /bin/containerd-shim-wasmtime-v1
+
+    - name: Copy wasmer runtime from local to target
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim-wasmer-v1"
+        dest: /bin/containerd-shim-wasmer-v1
+
+    - name: Copy wasmedge runtime from local to target
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim-wasmedge-v1"
+        dest: /bin/containerd-shim-wasmedge-v1
     
-    - name: Make new wasm shim executable
+    - name: Make new wasmtime shim executable
       command: chmod +x /bin/containerd-shim-wasmtime-v1
+
+    - name: Make new wasmer shim executable
+      command: chmod +x /bin/containerd-shim-wasmer-v1
+
+    - name: Make new wasmedge shim executable
+      command: chmod +x /bin/containerd-shim-wasmedge-v1
 
     - name: Copy containerd config from local to target
       copy:

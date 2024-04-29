@@ -18,6 +18,7 @@ def set_container_location(config):
         config (dict): Parsed configuration
     """
     source = "macko99vu/wasmgo"
+    # source = "macko99vu/pythonbase"
     config["images"] = {"worker": "%s:latest" % (source)}
 
 

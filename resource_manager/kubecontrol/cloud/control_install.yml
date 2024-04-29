@@ -219,8 +219,20 @@
         apiVersion: node.k8s.io/v1
         kind: RuntimeClass
         metadata:
-          name: wasm-rc
+          name: wasmtime-rc
         handler: wasmtime
+        ---
+        apiVersion: node.k8s.io/v1
+        kind: RuntimeClass
+        metadata:
+          name: wasmer-rc
+        handler: wasmer
+        ---
+        apiVersion: node.k8s.io/v1
+        kind: RuntimeClass
+        metadata:
+          name: wasmedge-rc
+        handler: wasmedge
         EOF
 
     - name: Apply runtime class for Wasmtime

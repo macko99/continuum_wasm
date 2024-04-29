@@ -15,7 +15,7 @@
             metadata:
               name: {{ app_name }}
             spec:
-              runtimeClassName: wasm-rc
+              runtimeClassName: wasmedge-rc
               containers:
               - name: {{ app_name }}
                 image: {{ image }}
