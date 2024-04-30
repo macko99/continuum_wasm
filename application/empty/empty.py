@@ -17,6 +17,7 @@ def set_container_location(config):
     Args:
         config (dict): Parsed configuration
     """
+    # source = "macko99vu/wasmrust"
     source = "macko99vu/wasmgo"
     # source = "macko99vu/pythonbase"
     config["images"] = {"worker": "%s:latest" % (source)}
@@ -61,7 +62,7 @@ def cache_worker(_config, _machines):
         (dict): Application variables
     """
     app_vars = {
-        "sleep_time": 60,
+        "sleep_time": 10,
     }
     return app_vars
 

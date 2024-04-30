@@ -544,7 +544,7 @@ def plot_resources_os(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=N
     for column in df.columns:
         if "cpu-used" in column:
             name = column
-            if "cloud0" in column:
+            if "controller" in column:
                 name = "Control Plane"
             else:
                 name = "Worker Node " + column.split("cloud")[1].split(" (")[0]
@@ -589,7 +589,7 @@ def plot_resources_os(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=N
     for column in df.columns:
         if "memory-used" in column:
             name = column
-            if "cloud0" in column:
+            if "controller" in column:
                 name = "Control Plane"
             else:
                 name = "Worker Node " + column.split("cloud")[1].split(" (")[0]
