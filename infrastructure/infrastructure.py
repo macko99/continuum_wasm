@@ -482,10 +482,10 @@ def docker_registry(config, machines):
             logging.error("Continuum supports Kubernetes v1.[23-27].0, not: %s", version)
 
         images_kube = [
-            "redplanet00/kube-proxy:" + version,
-            "redplanet00/kube-controller-manager:" + version,
-            "redplanet00/kube-scheduler:" + version,
-            "redplanet00/kube-apiserver:" + version,
+            "macko99vu/kube-proxy:" + version,
+            "macko99vu/kube-controller-manager:" + version,
+            "macko99vu/kube-scheduler:" + version,
+            "macko99vu/kube-apiserver:" + version,
             "redplanet00/etcd:" + etcd,
             "redplanet00/pause:" + pause,
         ]

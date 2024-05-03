@@ -1180,7 +1180,7 @@ def get_control_output(config, machines, starttime, status):
             if comp not in parsed[name]:
                 parsed[name][comp] = []
 
-            time_obj, line = parse_custom_kubernetes_splits(line)
+            time_obj, line = parse_custom_kubernetes_splits(line, printOut=False)
             if time_obj is False:
                 logging.debug("Couldn't properly parse line: %s", line)
                 continue
@@ -1212,7 +1212,7 @@ def get_control_output(config, machines, starttime, status):
     return parsed_copy, endtime
 
 
-def parse_custom_kubernetes_splits(line):
+def parse_custom_kubernetes_splits(line, printOut=False):
     """Parse lines from Kubernetes custom output, like:
     I0824 22:23:21.269974    5026 kubectl.go:32] %!s(int64=1692908601269961032) [CONTINUUM] 0400\n
 
@@ -1240,6 +1240,8 @@ def parse_custom_kubernetes_splits(line):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
+    if printOut and ('empty' in line or line.split("[CONTINUUM] ")[1] == ''):
+        logging.info("### [CONTINUUM] ###: %s", line)
     line = line.split("[CONTINUUM] ")[1]
     return time_obj, line
 

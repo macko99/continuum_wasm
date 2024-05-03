@@ -17,8 +17,8 @@ def set_container_location(config):
     Args:
         config (dict): Parsed configuration
     """
-    # source = "macko99vu/wasmrust"
-    source = "macko99vu/wasmgo"
+    source = "macko99vu/wasmrust"
+    # source = "macko99vu/wasmgo"
     # source = "macko99vu/pythonbase"
     config["images"] = {"worker": "%s:latest" % (source)}
 
@@ -139,6 +139,8 @@ def format_output(
             validate_data(df)
             plot.plot_control(df, config["timestamp"])
             plot.plot_p56(df, config["timestamp"])
+            plot.plot_p57(df, config["timestamp"], width=500)
+            plot.plot_p57(df, config["timestamp"], width=20)
             plot.plot_resources(df_resources, config["timestamp"], xmax=endtime)
 
 
@@ -441,6 +443,33 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0505", "11_sandbox_start"],  # Create sandbox
         ["kubelet", "0514", "12_create_container"],  # Create containers
         ["kubelet", "0517", "13_start_container"],  # Start container
+        ["kubelet", "0502", "901_0502"],
+        ["kubelet", "0503", "902_0503"],
+        ["kubelet", "0506", "903_0506"],
+        ["kubelet", "0507", "904_0507"],
+        ["kubelet", "0508", "905_0508"],
+        ["kubelet", "0509", "906_0509"],
+        ["kubelet", "0510", "907_0510"],
+        ["kubelet", "0511", "909_0511"],
+        ["kubelet", "0512", "910_0512"],
+        ["kubelet", "0513", "911_0513"],
+        ["kubelet", "0515", "912_0515"],
+        # ["kubelet", "0516", "913_0516"],
+        ["kubelet", "0518", "914_0518"],
+        ["kubelet", "0519", "915_0519"],
+        ["kubelet", "0520", "916_0520"],
+        ["kubelet", "0521", "917_0521"],
+        ["kubelet", "0522", "918_0522"],
+        ["kubelet", "0523", "919_0523"],
+        ["kubelet", "0540", "920_0540"],
+        ["kubelet", "0541", "921_0541"],
+        ["kubelet", "0542", "922_0542"],
+        ["kubelet", "0555", "923_0555"],
+        ["kubelet", "0556", "924_0556"],
+        ["kubelet", "0557", "925_0557"],
+        ["kubelet", "0558", "926_0558"],
+        ["kubelet", "0559", "927_0559"],
+        ["kubelet", "0560", "928_0560"],
         [None, None, "14_app_start"],  # First print in the application
     ]
 
@@ -561,6 +590,33 @@ def print_control(config, worker_metrics):
             "12_create_container": "kubelet_applied_sandbox (s)",
             "13_start_container": "kubelet_created_container (s)",
             "14_app_start": "started_application (s)",
+            "901_0502": "kubelet_0502 (s)",
+            "902_0503": "kubelet_0503 (s)",
+            "903_0506": "kubelet_0506 (s)",
+            "904_0507": "kubelet_0507 (s)",
+            "905_0508": "kubelet_0508 (s)",
+            "906_0509": "kubelet_0509 (s)",
+            "907_0510": "kubelet_0510 (s)",
+            "909_0511": "kubelet_0511 (s)",
+            "910_0512": "kubelet_0512 (s)",
+            "911_0513": "kubelet_0513 (s)",
+            "912_0515": "kubelet_0515 (s)",
+            # "913_0516": "kubelet_0516 (s)",
+            "914_0518": "kubelet_0518 (s)",
+            "915_0519": "kubelet_0519 (s)",
+            "916_0520": "kubelet_0520 (s)",
+            "917_0521": "kubelet_0521 (s)",
+            "918_0522": "kubelet_0522 (s)",
+            "919_0523": "kubelet_0523 (s)",
+            "920_0540": "kubelet_0540 (s)",
+            "921_0541": "kubelet_0541 (s)",
+            "922_0542": "kubelet_0542 (s)",
+            "923_0555": "kubelet_0555 (s)",
+            "924_0556": "kubelet_0556 (s)",
+            "925_0557": "kubelet_0557 (s)",
+            "926_0558": "kubelet_0558 (s)",
+            "927_0559": "kubelet_0559 (s)",
+            "928_0560": "kubelet_0560 (s)"
         },
         inplace=True,
     )

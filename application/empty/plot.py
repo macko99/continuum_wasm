@@ -268,6 +268,7 @@ def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     ]
 
     df_plot = df_plot.sort_values(by=["started_application (s)"])
+    df_plot.to_csv("./logs/%s_sort_dataframe_56.csv" % timestamp, index=False, encoding="utf-8")
 
     y = [*range(len(df_plot["started_application (s)"]))]
 
@@ -335,6 +336,174 @@ def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     plt.savefig("./logs/%s_breakdown_intern_P56.pdf" % (timestamp), bbox_inches="tight")
     plt.close(fig)
 
+def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, width=500):
+    """Plot controlplane data from the source code
+
+    Phases:
+    1: Start Pod
+        - Starts:   C_start_pod     -> 0500
+        - Ends:     C_volume_mount  -> 0504
+    2. Volume mount
+        - Ends:     C_apply_sandbox -> 0511
+    3. Create Sandbox
+        - Ends:     C_start_cont    -> 0521
+    4. Start container
+        - Ends:     C_pod_done      -> 0515 Pod is done
+    5. Start application
+        - Ends:     created_container (s)
+
+    Args:
+        df (DataFrame): Pandas dataframe object with parsed timestamps per category
+        timestamp (time): Global timestamp used to save all files of this run
+        xmax (bool): Optional. Set the xmax of the plot by hand. Defaults to None.
+        ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
+    """
+    plt.rcParams.update({"font.size": 20})
+    fig, ax1 = plt.subplots(figsize=(width, 5))
+
+    bar_height = 1.1
+
+    df_plot = df.copy(deep=True)
+    df_plot = df_plot[
+        [
+            "kubelet_pod_received (s)",
+            "kubelet_created_cgroup (s)",
+            "kubelet_mounted_volume (s)",
+            "kubelet_applied_sandbox (s)",
+            "kubelet_created_container (s)",
+            "started_application (s)",
+            "kubelet_0502 (s)",
+            "kubelet_0503 (s)",
+            "kubelet_0506 (s)",
+            "kubelet_0507 (s)",
+            "kubelet_0508 (s)",
+            "kubelet_0509 (s)",
+            "kubelet_0510 (s)",
+            "kubelet_0511 (s)",
+            "kubelet_0512 (s)",
+            "kubelet_0513 (s)",
+            "kubelet_0515 (s)",
+            # "kubelet_0516 (s)",
+            "kubelet_0518 (s)",
+            "kubelet_0519 (s)",
+            "kubelet_0520 (s)",
+            "kubelet_0521 (s)",
+            "kubelet_0522 (s)",
+            "kubelet_0523 (s)",
+            "kubelet_0540 (s)",
+            "kubelet_0541 (s)",
+            "kubelet_0542 (s)",
+            "kubelet_0555 (s)",
+            "kubelet_0556 (s)",
+            "kubelet_0557 (s)",
+            "kubelet_0558 (s)",
+            "kubelet_0559 (s)",
+            "kubelet_0560 (s)",
+        ]
+    ]
+
+    # df_plot.to_csv("./logs/%s_unsort_dataframe.csv" % timestamp, index=False, encoding="utf-8")
+    df_plot = df_plot.sort_values(by=["started_application (s)"])
+    df_plot = df_plot.sort_values(by=df.first_valid_index(), axis=1)
+    df_plot.to_csv("./logs/%s_sort_dataframe_p57.csv" % timestamp, index=False, encoding="utf-8")
+
+    y = [*range(len(df_plot["started_application (s)"]))]
+
+    left = [0 for _ in range(len(y))]
+
+    new_colors = {
+        "kubelet_pod_received (s)": ["EMPTY", "#ffffff",],
+        "kubelet_created_cgroup (s)": [r"$T_{cg} + T_{nn}$", "#6929c4",],
+        "kubelet_mounted_volume (s)": [r"$\sum_{i=0}^{V} T_{mv,i}$", "#1192e8",],
+        "kubelet_applied_sandbox (s)": [r"$T_{cs}$", "#005d5d",],
+        "kubelet_created_container (s)": [r"$\sum_{i=0}^{C} T_{cc,i}$", "#9f1853",],
+        "started_application (s)": [r"$\sum_{j=0}^{C} T_{sc,j}$", "#fa4d56",],
+        "kubelet_0502 (s)": ["0502", "#570408",],
+        "kubelet_0503 (s)": ["0503", "#650408",],
+        "kubelet_0506 (s)": ["0506", "#750408",],
+        "kubelet_0507 (s)": ["0507", "#850408",],
+        "kubelet_0508 (s)": ["0508", "#950408",],
+        "kubelet_0509 (s)": ["0509", "#A50408",],
+        "kubelet_0510 (s)": ["0510", "#B50408",],
+        "kubelet_0511 (s)": ["0511", "#C50408",],
+        "kubelet_0512 (s)": ["0512", "#D50408",],
+        "kubelet_0513 (s)": ["0513", "#E50408",],
+        "kubelet_0515 (s)": ["0515", "#F50408",],
+        "kubelet_0516 (s)": ["0516", "#570408",],
+        "kubelet_0518 (s)": ["0518", "#F51408",],
+        "kubelet_0519 (s)": ["0519", "#F52408",],
+        "kubelet_0520 (s)": ["0520", "#F53408",],
+        "kubelet_0521 (s)": ["0521", "#F54408",],
+        "kubelet_0522 (s)": ["0522", "#F55408",],
+        "kubelet_0523 (s)": ["0523", "#F56408",],
+        "kubelet_0540 (s)": ["0540", "#F57408",],
+        "kubelet_0541 (s)": ["0541", "#F58408",],
+        "kubelet_0542 (s)": ["0542", "#F59408",],
+        "kubelet_0555 (s)": ["0555", "#F5A408",],
+        "kubelet_0556 (s)": ["0556", "#F5B408",],
+        "kubelet_0557 (s)": ["0557", "#F5C408",],
+        "kubelet_0558 (s)": ["0558", "#F5D408",],
+        "kubelet_0559 (s)": ["0559", "#F5E408",],
+        "kubelet_0560 (s)": ["0560", "#F5F408",],
+    }
+    used_colors = {}
+
+    for column in df_plot:
+        plt.barh(y, df_plot[column] - left, color=new_colors[column][1], left=left, align="edge", height=bar_height)
+        left = df_plot[column]
+        used_colors[new_colors[column][0]] = new_colors[column][1]
+
+    cs = list(used_colors.values())
+
+    # Calculate final bar to make all bars the same length
+    max_time = df_plot["started_application (s)"].max()
+    left = df_plot["started_application (s)"]
+    diff = [max_time - l for l in left]
+    plt.barh(y, diff, color="#ffffff", left=left, align="edge", height=bar_height)
+
+    # Set plot details
+    ax1.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax1.grid(True)
+
+    # Set y axis details
+    ax1.set_ylabel("Pods")
+
+    y_max = len(y)
+    if ymax:
+        y_max = ymax
+
+    ax1.set_ylim(0, y_max)
+
+    # Set x axis details
+    ax1.set_xlabel("Time (s)")
+    x_max = max(1.0, max_time)
+    if xmax:
+        x_max = xmax
+
+    ax1.set_xlim(0, x_max)
+    #set xticks
+    xticks = np.arange(0, x_max, 0.1)
+    ax1.set_xticks(xticks)
+
+    # Set x/y ticks if argument passed
+    if xinter:
+        ax1.set_xticks(np.arange(0, x_max + 0.1, xinter))
+    if yinter:
+        ax1.set_yticks(np.arange(0, y_max + 0.1, yinter))
+
+    # add legend
+    patches = []
+    for c in cs[1:]:
+        patches.append(mpatches.Patch(facecolor=c, edgecolor="k"))
+
+    used_colors.pop("EMPTY")
+    texts = used_colors.keys()
+    ax1.legend(patches, texts, loc="best", fontsize="16")
+
+    # Save plot
+    plt.savefig("./logs/%s_breakdown_intern_P57_%s.pdf" % (timestamp, width), bbox_inches="tight")
+    plt.close(fig)
 
 def plot_resources(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     """Plot resource utilization data
