@@ -138,9 +138,9 @@ def format_output(
             df_resources = print_resources(config, resource_output)
             validate_data(df)
             plot.plot_control(df, config["timestamp"])
-            plot.plot_p56(df, config["timestamp"])
-            plot.plot_p57(df, config["timestamp"], width=500)
-            plot.plot_p57(df, config["timestamp"], width=20)
+            plot.plot_p56(df, config["timestamp"], width=20, height=5)
+            plot.plot_p57(df, config["timestamp"], width=500, height=50)
+            plot.plot_p57(df, config["timestamp"], width=20, height=5)
             plot.plot_resources(df_resources, config["timestamp"], xmax=endtime)
 
 
@@ -470,6 +470,34 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0558", "926_0558"],
         ["kubelet", "0559", "927_0559"],
         ["kubelet", "0560", "928_0560"],
+
+        ["kubelet", "0601", "0601"],
+        ["kubelet", "0602", "0602"],
+        ["kubelet", "0603", "0603"],
+        ["kubelet", "0604", "0604"],
+        ["kubelet", "0605", "0605"],
+        ["kubelet", "0606", "0606"],
+
+        ["kubelet", "0641", "0641"],
+        ["kubelet", "0642", "0642"],
+        ["kubelet", "0643", "0643"],
+        ["kubelet", "0644", "0644"],
+        ["kubelet", "0645", "0645"],
+        ["kubelet", "0646", "0646"],
+        ["kubelet", "0647", "0647"],
+        ["kubelet", "0648", "0648"],
+
+        ["kubelet", "0611", "0611"],
+        ["kubelet", "0612", "0612"],
+        ["kubelet", "0613", "0613"],
+        ["kubelet", "0614", "0614"],
+
+        ["kubelet", "0631", "0631"],
+        ["kubelet", "0632", "0632"],
+        ["kubelet", "0633", "0633"],
+        ["kubelet", "0634", "0634"],    
+        ["kubelet", "0635", "0635"],
+
         [None, None, "14_app_start"],  # First print in the application
     ]
 

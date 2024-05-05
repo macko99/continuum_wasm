@@ -1240,7 +1240,7 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
-    if printOut and ('empty' in line or line.split("[CONTINUUM] ")[1] == ''):
+    if printOut and ("06" in line.split("[CONTINUUM]")[1]):
         logging.info("### [CONTINUUM] ###: %s", line)
     line = line.split("[CONTINUUM] ")[1]
     return time_obj, line

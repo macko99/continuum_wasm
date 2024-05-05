@@ -148,11 +148,11 @@ def plot_control(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     df_plot = df.copy(deep=True)
     df_plot = df_plot[
         [
-            "controller_read_workload (s)",
-            "controller_unpacked_workload (s)",
-            "scheduler_read_pod (s)",
-            "kubelet_pod_received (s)",
-            "kubelet_applied_sandbox (s)",
+            "controller_read_workload (s)", #0028
+            "controller_unpacked_workload (s)", #0277
+            "scheduler_read_pod (s)",   #0124
+            "kubelet_pod_received (s)", #0500
+            "kubelet_applied_sandbox (s)",  #0514
             "started_application (s)",
         ]
     ]
@@ -161,11 +161,11 @@ def plot_control(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     left = [0 for _ in range(len(y))]
 
     colors = {
-        "S1: CWO": "#6929c4",
-        "S2: UWO": "#1192e8",
-        "S3: CPO": "#005d5d",
-        "S4: SP": "#9f1853",
-        "S5: CP": "#fa4d56",
+        "S1: CWO end:0028": "#6929c4",
+        "S2: UWO end:0277": "#1192e8",
+        "S3: CPO end:0124": "#005d5d",
+        "S4: SP end:0500": "#9f1853",
+        "S5: CP end:0514": "#fa4d56",
         "S6: CC": "#570408",
         "Deployed": "#198038",
     }
@@ -228,7 +228,7 @@ def plot_control(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     plt.close(fig)
 
 
-def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
+def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, width=20, height=5):
     """Plot controlplane data from the source code
 
     Phases:
@@ -251,18 +251,18 @@ def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
         ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
     """
     plt.rcParams.update({"font.size": 20})
-    fig, ax1 = plt.subplots(figsize=(12, 4))
+    fig, ax1 = plt.subplots(figsize=(width, height))
 
     bar_height = 1.1
 
     df_plot = df.copy(deep=True)
     df_plot = df_plot[
         [
-            "kubelet_pod_received (s)",
-            "kubelet_created_cgroup (s)",
-            "kubelet_mounted_volume (s)",
-            "kubelet_applied_sandbox (s)",
-            "kubelet_created_container (s)",
+            "kubelet_pod_received (s)", #0500
+            "kubelet_created_cgroup (s)", #0504
+            "kubelet_mounted_volume (s)", #0505
+            "kubelet_applied_sandbox (s)", #0514
+            "kubelet_created_container (s)", #0517
             "started_application (s)",
         ]
     ]
@@ -275,11 +275,11 @@ def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     left = [0 for _ in range(len(y))]
 
     colors = {
-        "EMPTY": "#ffffff",
-        r"$T_{cg} + T_{nn}$": "#6929c4",
-        r"$\sum_{i=0}^{V} T_{mv,i}$": "#1192e8",
-        r"$T_{cs}$": "#005d5d",
-        r"$\sum_{i=0}^{C} T_{cc,i}$": "#9f1853",
+        "EMPTY": "#ffffff", 
+        r"$T_{cg} + T_{nn}$ 500-504": "#6929c4",
+        r"$\sum_{i=0}^{V} T_{mv,i}$ 504-505": "#1192e8",
+        r"$T_{cs}$ 505-514": "#005d5d",
+        r"$\sum_{i=0}^{C} T_{cc,i}$ 514-517": "#9f1853",
         r"$\sum_{j=0}^{C} T_{sc,j}$": "#fa4d56",
         "Deployed": "#ffffff",
     }
@@ -336,7 +336,7 @@ def plot_p56(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):
     plt.savefig("./logs/%s_breakdown_intern_P56.pdf" % (timestamp), bbox_inches="tight")
     plt.close(fig)
 
-def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, width=500):
+def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, width=500, height=5):
     """Plot controlplane data from the source code
 
     Phases:
@@ -359,92 +359,140 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
     """
     plt.rcParams.update({"font.size": 20})
-    fig, ax1 = plt.subplots(figsize=(width, 5))
+    fig, ax1 = plt.subplots(figsize=(width, height))
 
     bar_height = 1.1
 
     df_plot = df.copy(deep=True)
     df_plot = df_plot[
         [
-            "kubelet_pod_received (s)",
-            "kubelet_created_cgroup (s)",
-            "kubelet_mounted_volume (s)",
-            "kubelet_applied_sandbox (s)",
-            "kubelet_created_container (s)",
+            "kubelet_pod_received (s)", #0500
+            # "kubelet_created_cgroup (s)", #0504
+            # "kubelet_mounted_volume (s)", #0505
+            # "kubelet_applied_sandbox (s)", #0514
+            # "kubelet_created_container (s)", #0517
             "started_application (s)",
-            "kubelet_0502 (s)",
-            "kubelet_0503 (s)",
-            "kubelet_0506 (s)",
-            "kubelet_0507 (s)",
-            "kubelet_0508 (s)",
-            "kubelet_0509 (s)",
-            "kubelet_0510 (s)",
-            "kubelet_0511 (s)",
-            "kubelet_0512 (s)",
-            "kubelet_0513 (s)",
-            "kubelet_0515 (s)",
+            # "kubelet_0502 (s)",
+            # "kubelet_0503 (s)",
+            # "kubelet_0506 (s)",
+            # "kubelet_0507 (s)",
+            # "kubelet_0508 (s)",
+            # "kubelet_0509 (s)",
+            # "kubelet_0510 (s)",
+            # "kubelet_0511 (s)",
+            # "kubelet_0512 (s)",
+            # "kubelet_0513 (s)",
+            # "kubelet_0515 (s)",
             # "kubelet_0516 (s)",
-            "kubelet_0518 (s)",
-            "kubelet_0519 (s)",
-            "kubelet_0520 (s)",
-            "kubelet_0521 (s)",
-            "kubelet_0522 (s)",
-            "kubelet_0523 (s)",
-            "kubelet_0540 (s)",
-            "kubelet_0541 (s)",
-            "kubelet_0542 (s)",
-            "kubelet_0555 (s)",
-            "kubelet_0556 (s)",
-            "kubelet_0557 (s)",
-            "kubelet_0558 (s)",
-            "kubelet_0559 (s)",
-            "kubelet_0560 (s)",
+            # "kubelet_0518 (s)",
+            # "kubelet_0519 (s)",
+            # "kubelet_0520 (s)",
+            # "kubelet_0521 (s)",
+            # "kubelet_0522 (s)",
+            # "kubelet_0523 (s)",
+            # "kubelet_0540 (s)",
+            # "kubelet_0541 (s)",
+            # "kubelet_0542 (s)",
+            # "kubelet_0555 (s)",
+            # "kubelet_0556 (s)",
+            # "kubelet_0557 (s)",
+            # "kubelet_0558 (s)",
+            # "kubelet_0559 (s)",
+            # "kubelet_0560 (s)",
+        # "0601",
+        "0602",
+        # "0603",
+        # "0604",
+        "0605",
+        # "0606",
+        # "0641",
+        "0642",
+        # "0643",
+        # "0644",
+        "0645",
+        # "0646",
+        "0647",
+        # "0648",
+        # "0611",
+        # "0612",
+        # "0613",
+        # "0614",
+        # "0631",
+        # "0632",
+        # "0633",
+        "0634",
+        "0635",
         ]
     ]
 
     # df_plot.to_csv("./logs/%s_unsort_dataframe.csv" % timestamp, index=False, encoding="utf-8")
     df_plot = df_plot.sort_values(by=["started_application (s)"])
     df_plot = df_plot.sort_values(by=df.first_valid_index(), axis=1)
-    df_plot.to_csv("./logs/%s_sort_dataframe_p57.csv" % timestamp, index=False, encoding="utf-8")
+    df_plot.to_csv("./logs/%s_sort_dataframe_57.csv" % timestamp, index=False, encoding="utf-8")
 
     y = [*range(len(df_plot["started_application (s)"]))]
 
     left = [0 for _ in range(len(y))]
 
     new_colors = {
-        "kubelet_pod_received (s)": ["EMPTY", "#ffffff",],
-        "kubelet_created_cgroup (s)": [r"$T_{cg} + T_{nn}$", "#6929c4",],
-        "kubelet_mounted_volume (s)": [r"$\sum_{i=0}^{V} T_{mv,i}$", "#1192e8",],
-        "kubelet_applied_sandbox (s)": [r"$T_{cs}$", "#005d5d",],
-        "kubelet_created_container (s)": [r"$\sum_{i=0}^{C} T_{cc,i}$", "#9f1853",],
-        "started_application (s)": [r"$\sum_{j=0}^{C} T_{sc,j}$", "#fa4d56",],
-        "kubelet_0502 (s)": ["0502", "#570408",],
-        "kubelet_0503 (s)": ["0503", "#650408",],
-        "kubelet_0506 (s)": ["0506", "#750408",],
-        "kubelet_0507 (s)": ["0507", "#850408",],
-        "kubelet_0508 (s)": ["0508", "#950408",],
-        "kubelet_0509 (s)": ["0509", "#A50408",],
-        "kubelet_0510 (s)": ["0510", "#B50408",],
-        "kubelet_0511 (s)": ["0511", "#C50408",],
-        "kubelet_0512 (s)": ["0512", "#D50408",],
-        "kubelet_0513 (s)": ["0513", "#E50408",],
-        "kubelet_0515 (s)": ["0515", "#F50408",],
-        "kubelet_0516 (s)": ["0516", "#570408",],
-        "kubelet_0518 (s)": ["0518", "#F51408",],
-        "kubelet_0519 (s)": ["0519", "#F52408",],
-        "kubelet_0520 (s)": ["0520", "#F53408",],
-        "kubelet_0521 (s)": ["0521", "#F54408",],
-        "kubelet_0522 (s)": ["0522", "#F55408",],
-        "kubelet_0523 (s)": ["0523", "#F56408",],
-        "kubelet_0540 (s)": ["0540", "#F57408",],
-        "kubelet_0541 (s)": ["0541", "#F58408",],
-        "kubelet_0542 (s)": ["0542", "#F59408",],
-        "kubelet_0555 (s)": ["0555", "#F5A408",],
-        "kubelet_0556 (s)": ["0556", "#F5B408",],
-        "kubelet_0557 (s)": ["0557", "#F5C408",],
-        "kubelet_0558 (s)": ["0558", "#F5D408",],
-        "kubelet_0559 (s)": ["0559", "#F5E408",],
-        "kubelet_0560 (s)": ["0560", "#F5F408",],
+        "kubelet_pod_received (s)": ["EMPTY", "#ffffff"],   #0500
+        "kubelet_created_cgroup (s)": [r"$T_{cg} + T_{nn}$ 0504", "#6929c4"],    #0504
+        "kubelet_mounted_volume (s)": [r"$\sum_{i=0}^{V} T_{mv,i}$ 0505", "#1192e8"],    #0505
+        "kubelet_applied_sandbox (s)": [r"$T_{cs}$ 0514", "#005d5d"], #0514
+        "kubelet_created_container (s)": [r"$\sum_{i=0}^{C} T_{cc,i}$ 0517", "#9f1853"], #0517
+        "started_application (s)": [r"$\sum_{j=0}^{C} T_{sc,j}$", "#fa4d56"],
+
+        "kubelet_0502 (s)": ["end:0502", "#9980ff"],
+        "kubelet_0503 (s)": ["end:0503", "#cc0000"],
+        "kubelet_0506 (s)": ["end:0506", "#993333"],
+        "kubelet_0507 (s)": ["end:0507", "#1aa3ff"],
+        "kubelet_0508 (s)": ["end:0508", "#cc3300"],
+        "kubelet_0509 (s)": ["end:0509", "#ffcc99"],
+        "kubelet_0510 (s)": ["end:0510", "#336600"],
+        "kubelet_0511 (s)": ["end:0511", "#cc0033"],
+        "kubelet_0512 (s)": ["end:0512", "#00CED1"],
+        "kubelet_0513 (s)": ["end:0513", "#ff751a"],
+        "kubelet_0515 (s)": ["end:0515", "#ff6600"],
+        "kubelet_0516 (s)": ["end:0516", "#660000"],
+        "kubelet_0518 (s)": ["end:0518", "#B3BF6F"],
+        "kubelet_0519 (s)": ["end:0519", "#cc0066"],
+        "kubelet_0520 (s)": ["end:0520", "#ff944d"],
+        "kubelet_0521 (s)": ["end:0521", "#ffe6cc"],
+        "kubelet_0522 (s)": ["end:0522", "#99ccff"],
+        "kubelet_0523 (s)": ["end:0523", "#23F23C"],
+        "kubelet_0540 (s)": ["end:0540", "#ffb380"],
+        "kubelet_0541 (s)": ["end:0541", "#66cc66"],
+        "kubelet_0542 (s)": ["end:0542", "#e6ac00"],
+        "kubelet_0555 (s)": ["end:0555", "#ff3300"],
+        "kubelet_0556 (s)": ["end:0556", "#ffdbb0"],
+        "kubelet_0557 (s)": ["end:0557", "#ff8533"],
+        "kubelet_0558 (s)": ["end:0558", "#8b4513"],
+        "kubelet_0559 (s)": ["end:0559", "#23F23C"],
+        "kubelet_0560 (s)": ["end:0560", "#ff1a75"],
+
+        "0601": ["0601:SyncPod:start", "#9980ff"],
+        "0602": ["0602:SyncPod:cgroups:done", "#cc0000"],
+        "0603": ["0603:SyncPod:CreateMirrorPod:done", "#993333"],
+        "0604": ["0604:SyncPod:makePodDataDirs:done", "#cc9900"],
+        "0605": ["0605:SyncPod:WaitForAttachAndMount:done", "#1aa3ff"],
+        "0606": ["0606:SyncPod:done", "#cc3300"],
+        "0641": ["0641:startContainer:start", "#ffcc99"],
+        "0642": ["0642:startContainer:EnsureImageExists:done", "#ff1a75"],
+        "0643": ["0643:startContainer:generateContainerConfig:done", "#cc0033"],
+        "0644": ["0644:startContainer:PreCreateContainer:done", "#ff751a"],
+        "0645": ["0645:startContainer:CreateContainer:done", "#00CED1"],
+        "0646": ["0646:startContainer:PreStartContainer:done", "#660000"],
+        "0647": ["0647:startContainer:StartContainer:done", "#B3BF6F"],
+        "0648": ["0648:startContainer:done", "#cc0066"],
+        "0611": ["0611:SyncPod:start ", "#ff944d"],
+        "0612": ["0612:SyncPod:CreateSandbox:done", "#99ccff"],
+        "0613": ["0613:SyncPod:generatePodSandboxConfig:done", "#23F23C"],
+        "0614": ["0614:SyncPod:done", "#ffb380"],
+        "0631": ["0631:createPodSandbox:start", "#66cc66"],
+        "0632": ["0632:createPodSandbox:generatePodSandboxConfig:done", "#e6ac00"],
+        "0633": ["0633:createPodSandbox:MkdirAll:done", "#ff3300"],
+        "0634": ["0634:createPodSandbox:LookupRuntimeHandler:done", "#ffdbb0"],
+        "0635": ["0635:createPodSandbox:RunPodSandbox:done", "#ff8533"],
     }
     used_colors = {}
 
@@ -483,7 +531,7 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
 
     ax1.set_xlim(0, x_max)
     #set xticks
-    xticks = np.arange(0, x_max, 0.1)
+    xticks = np.arange(0, x_max, min([0.1, 1, 10], key=lambda x: abs(x - x_max/10)))
     ax1.set_xticks(xticks)
 
     # Set x/y ticks if argument passed
@@ -499,7 +547,7 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
 
     used_colors.pop("EMPTY")
     texts = used_colors.keys()
-    ax1.legend(patches, texts, loc="best", fontsize="16")
+    ax1.legend(patches, texts, loc="best", fontsize=height*2)
 
     # Save plot
     plt.savefig("./logs/%s_breakdown_intern_P57_%s.pdf" % (timestamp, width), bbox_inches="tight")
