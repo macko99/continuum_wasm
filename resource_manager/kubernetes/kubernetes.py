@@ -1180,7 +1180,7 @@ def get_control_output(config, machines, starttime, status):
             if comp not in parsed[name]:
                 parsed[name][comp] = []
 
-            time_obj, line = parse_custom_kubernetes_splits(line, printOut=False)
+            time_obj, line = parse_custom_kubernetes_splits(line, printOut=True)
             if time_obj is False:
                 logging.debug("Couldn't properly parse line: %s", line)
                 continue
@@ -1240,8 +1240,8 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
-    if printOut and ("06" in line.split("[CONTINUUM]")[1]):
-        logging.info("### [CONTINUUM] ###: %s", line)
+    if printOut and ("070" in line.split("[CONTINUUM]")[1]):
+        logging.info("### [CONTINUUM] DEBUG ###: %s", line)
     line = line.split("[CONTINUUM] ")[1]
     return time_obj, line
 

@@ -60,8 +60,45 @@
 
     - name: Copy containerd config from local to target
       copy:
-        src: "{{ continuum_home }}/cloud/config.toml"
+        # src: "{{ continuum_home }}/cloud/config.toml"
+        src: "{{ continuum_home }}/cloud/config_crun.toml"
         dest: /etc/containerd/config.toml
+
+    - name: Install WasmEdge 
+      shell: |
+        sudo curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | sudo bash -s -- -p /usr/local
+
+    - name: Install prerequsits of crun runtime
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: true
+      vars:
+        packages:
+          - make
+          - git
+          - gcc
+          - build-essential
+          - pkgconf
+          - libtool
+          - libsystemd-dev
+          - libprotobuf-c-dev
+          - libcap-dev
+          - libseccomp-dev
+          - libyajl-dev
+          - go-md2man
+          - autoconf
+          - python3
+          - automake
+
+    - name: Install crun runtime
+      shell: |
+        git clone https://github.com/containers/crun
+        cd crun
+        ./autogen.sh
+        ./configure --with-wasmedge
+        make
+        make install
 
     - name: Replace registry ip in containerd config file
       command: sed -i 's#REGISTRY-IP#{{ registry_ip }}#g' /etc/containerd/config.toml

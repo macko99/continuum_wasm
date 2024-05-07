@@ -358,7 +358,7 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         xmax (bool): Optional. Set the xmax of the plot by hand. Defaults to None.
         ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
     """
-    plt.rcParams.update({"font.size": 20})
+    plt.rcParams.update({"font.size": height*2})
     fig, ax1 = plt.subplots(figsize=(width, height))
 
     bar_height = 1.1
