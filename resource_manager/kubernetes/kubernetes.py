@@ -1124,7 +1124,7 @@ def get_control_output(config, machines, starttime, status):
 
     # For worker nodes
     if len(config["cloud_ssh"]) > 1:
-        command = """\"sudo su -c \\\"journalctl -u kubelet | \
+        command = """\"sudo su -c \\\"journalctl -u kubelet -u containerd | \
             grep -i '\[continuum\]' > /var/log/continuum.txt\\\"\""""
         results += machines[0].process(config, command, shell=True, ssh=config["cloud_ssh"][1:])
 
@@ -1156,12 +1156,16 @@ def get_control_output(config, machines, starttime, status):
         outputs.append(output)
 
     # Parse output, filter per component, get timestamp and custom output
-    components = ["kubelet", "scheduler", "apiserver", "proxy", "controller-manager"]
+    components = ["kubelet", "scheduler", "apiserver", "proxy", "controller-manager", "crun"]
     parsed = {}
+
+    printOut=True
 
     for ssh, output in zip(config["cloud_ssh"], outputs):
         name = ssh.split("@")[0]
         parsed[name] = {}
+
+        dict_id_to_name = {}
 
         for line in output:
             line = line.strip()
@@ -1170,6 +1174,8 @@ def get_control_output(config, machines, starttime, status):
             comp = ""
             for c in components:
                 if c in line:
+                    # if c == "crun":
+                    #     c = "kubelet"
                     comp = c
                     break
 
@@ -1180,13 +1186,39 @@ def get_control_output(config, machines, starttime, status):
             if comp not in parsed[name]:
                 parsed[name][comp] = []
 
-            time_obj, line = parse_custom_kubernetes_splits(line, printOut=True)
+            time_obj, line = parse_custom_kubernetes_splits(line, printOut=printOut)
             if time_obj is False:
                 logging.debug("Couldn't properly parse line: %s", line)
                 continue
 
             parsed[name][comp].append([time_obj, line])
-
+        
+        # 0645 startContainer:CreateContainer:done pod=%s container=%s id=%s
+        for comp in parsed[name]:
+            for entry in parsed[name][comp]:
+                if "0645" in entry[1] and "id=" in entry[1] and "container=" in entry[1] and "pod=" in entry[1]:
+                    id = entry[1].split("id=")[1]
+                    container = entry[1].split("container=")[1].split(" ")[0]
+                    pod = entry[1].split("pod=")[1].split(" ")[0]
+                    dict_id_to_name[id] = [container, pod]
+                    entry[1] = entry[1].split("id=")[0]
+                    # if printOut:
+                    #     logging.debug("### [CONTINUUM] DEBUG ###: CONTAINER ID %s -> NAME %s", id, container)
+        
+        # 0811 libcrun_container_create:start id=
+        for comp in parsed[name]:
+            for entry in parsed[name][comp]:
+                if "08" in entry[1] and "id=" in entry[1]:
+                    id = entry[1].split("id=")[1]
+                    if id in dict_id_to_name:
+                        container = dict_id_to_name[id][0]
+                        pod = dict_id_to_name[id][1]
+                        entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
+                        # if printOut:
+                        #     logging.debug("### [CONTINUUM] DEBUG ###: NEW: %s", entry[1])
+                    else:
+                        parsed[name][comp].remove(entry)
+                
     # Now filter out everything before starttime and after endtime
     # Starttime and endtime are both in 192031029309.1230910293 format
     endtime = status[-1]["time_orig"]
@@ -1240,7 +1272,7 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
-    if printOut and ("070" in line.split("[CONTINUUM]")[1]):
+    if printOut and ("065" in line.split("[CONTINUUM]")[1]):
         logging.info("### [CONTINUUM] DEBUG ###: %s", line)
     line = line.split("[CONTINUUM] ")[1]
     return time_obj, line

@@ -300,7 +300,7 @@ def check(
 
     # Only the kubelet component is on worker nodes, all other components are in the controlplane
     is_controlplane = True
-    if component == "kubelet":
+    if component == "kubelet" or component == "crun":
         is_controlplane = False
 
     i = 0
@@ -498,6 +498,25 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0634", "0634"],    
         ["kubelet", "0635", "0635"],
 
+        # ["kubelet", "0651", "0651"],
+        # ["kubelet", "0652", "0652"],
+        # ["kubelet", "0653", "0653"],
+        # ["kubelet", "0654", "0654"],
+        # ["kubelet", "0655", "0655"],
+        # ["kubelet", "0656", "0656"],
+        # ["kubelet", "0657", "0657"],
+        # ["kubelet", "0658", "0658"],
+
+        ["kubelet", "0701", "0701"],
+        ["kubelet", "0702", "0702"],
+
+        ["crun", "0811", "0811"],
+        ["crun", "0812", "0812"],
+        # ["crun", "0824", "0824"],
+        ["crun", "0828", "0828"],
+        ["crun", "0829", "0829"],
+        ["crun", "0825", "0825"],
+    
         [None, None, "14_app_start"],  # First print in the application
     ]
 

@@ -422,6 +422,25 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         # "0633",
         "0634",
         "0635",
+
+        # "0651",
+        # "0652",
+        # "0653",
+        # "0654",
+        # "0655",
+        # "0656",
+        # "0657",
+        # "0658",
+
+
+        "0811",
+        "0812",
+        # "0813",
+        # "0814",
+        # "0824",
+        "0828",
+        "0829",
+        "0825",
         ]
     ]
 
@@ -493,6 +512,24 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         "0633": ["0633:createPodSandbox:MkdirAll:done", "#ff3300"],
         "0634": ["0634:createPodSandbox:LookupRuntimeHandler:done", "#ffdbb0"],
         "0635": ["0635:createPodSandbox:RunPodSandbox:done", "#ff8533"],
+
+        "0651": ["0651", "#9980ff"],
+        "0652": ["0652", "#cc0000"],
+        "0653": ["0653", "#993333"],
+        "0654": ["0654", "#1aa3ff"],
+        "0655": ["0655", "#cc3300"],
+        "0656": ["0656", "#ffcc99"],
+        "0657": ["0657", "#336600"],
+        "0658": ["0658", "#cc0033"],
+
+        "0811" : ["0811:libcrun_container_create:start", "#ff944d"],
+        "0812" : ["0812:libcrun_container_create:done", "#99ccff"],
+        "0813" : ["0813:libcrun_container_start:start", "#23F23C"],
+        "0814" : ["0814:libcrun_container_start:done", "#ffb380"],
+        "0824" : ["0824:libcrun_container_run_internal:start", "#66cc66"],
+        "0828" : ["0828:libcrun_configure_handler:start", "#e6ac00"],
+        "0829" : ["0829:libcrun_configure_handler:done", "#ff3300"],
+        "0825" : ["0825:libcrun_container_run_internal:done", "#ffdbb0"],
     }
     used_colors = {}
 
