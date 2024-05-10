@@ -515,11 +515,11 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0702", "0702"],
 
         # ["crun", "0811", "0811"],
-        ["crun", "0812", "0812"],
+        # ["crun", "0812", "0812"],
         # ["crun", "0824", "0824"],
-        ["crun", "0828", "0828"],
-        ["crun", "0829", "0829"],
-        ["crun", "0825", "0825"],
+        # ["crun", "0828", "0828"],
+        # ["crun", "0829", "0829"],
+        # ["crun", "0825", "0825"],
 
         ["containerd", "0901", "0901"],
         ["containerd", "0902", "0902"],

@@ -1159,7 +1159,7 @@ def get_control_output(config, machines, starttime, status):
     components = ["kubelet", "scheduler", "apiserver", "proxy", "controller-manager", "crun", "containerd"]
     parsed = {}
 
-    printOut=True
+    printOut=False
 
     dict_id_to_name = {}
     dict_id_to_pod = {}
@@ -1208,7 +1208,8 @@ def get_control_output(config, machines, starttime, status):
         # 0635 createPodSandbox:RunPodSandbox:done pod=%s sandbox=%s
         for entry in parsed[name]["kubelet"]:
             if entry[1].startswith("0635") and "pod=" in entry[1] and "sandbox=" in entry[1]:
-                logging.debug("#DEBUG: line: %s", entry[1])
+                if printOut:
+                    logging.debug("#DEBUG: line: %s", entry[1])
                 sandbox = entry[1].split("sandbox=")[1]
                 pod = entry[1].split("pod=")[1].split(" ")[0]
                 dict_id_to_pod[sandbox] = pod
@@ -1233,7 +1234,7 @@ def get_control_output(config, machines, starttime, status):
         # 0946 containerd:client:StartContainer:start sandbox=9e406a83cc15620ab14cc99c4643f5b4fed6a13935ce51250e6079d945c96bc4
         for entry in parsed[name]["containerd"]:
             if entry[1].startswith("09") and "sandbox=" in entry[1]:
-                if entry[1].startswith("0946"):
+                if printOut and entry[1].startswith("0946"):
                     logging.debug("#DEBUG 0946: line: %s", entry[1])
                 sandbox = entry[1].split("sandbox=")[1].split(" ")[0]
                 if sandbox in dict_id_to_pod:
@@ -1251,7 +1252,8 @@ def get_control_output(config, machines, starttime, status):
                     if printOut:
                         logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
                 else:
-                    logging.debug("### [CONTINUUM] DEBUG ###: Sandbox %s not found in dict", sandbox)
+                    if printOut:
+                        logging.debug("### [CONTINUUM] DEBUG ###: Sandbox %s not found in dict", sandbox)
                     # parsed[name]["containerd"].remove(entry)
             else:
                 parsed[name]["containerd"].remove(entry)
