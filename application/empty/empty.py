@@ -300,7 +300,7 @@ def check(
 
     # Only the kubelet component is on worker nodes, all other components are in the controlplane
     is_controlplane = True
-    if component == "kubelet" or component == "crun":
+    if component in ["kubelet", "crun", "containerd"]:
         is_controlplane = False
 
     i = 0
@@ -359,6 +359,8 @@ def check(
                                 metric[tag] = time_delta(t, starttime)
                                 i += 1
                     elif "pod=" in line:
+                        if tag == "0901":
+                            logging.debug("[CONTINUUM] DEBUG Found 0901 in %s", line)
                         # Add to correct pod
                         pod = line.strip().split("pod=")[1]
                         if "default/" in pod:
@@ -370,6 +372,8 @@ def check(
                             if metric["pod"] == pod and metric[tag] is None:
                                 metric[tag] = time_delta(t, starttime)
                                 i += 1
+                                if tag == "0901":
+                                    logging.debug("[CONTINUUM] DEBUG i++")
                     elif "container=" in line:
                         # Add to correct container
                         container = line.strip().split("container=default/")[1]
@@ -443,33 +447,33 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0505", "11_sandbox_start"],  # Create sandbox
         ["kubelet", "0514", "12_create_container"],  # Create containers
         ["kubelet", "0517", "13_start_container"],  # Start container
-        ["kubelet", "0502", "901_0502"],
-        ["kubelet", "0503", "902_0503"],
-        ["kubelet", "0506", "903_0506"],
-        ["kubelet", "0507", "904_0507"],
-        ["kubelet", "0508", "905_0508"],
-        ["kubelet", "0509", "906_0509"],
-        ["kubelet", "0510", "907_0510"],
-        ["kubelet", "0511", "909_0511"],
-        ["kubelet", "0512", "910_0512"],
-        ["kubelet", "0513", "911_0513"],
-        ["kubelet", "0515", "912_0515"],
-        # ["kubelet", "0516", "913_0516"],
-        ["kubelet", "0518", "914_0518"],
-        ["kubelet", "0519", "915_0519"],
-        ["kubelet", "0520", "916_0520"],
-        ["kubelet", "0521", "917_0521"],
-        ["kubelet", "0522", "918_0522"],
-        ["kubelet", "0523", "919_0523"],
-        ["kubelet", "0540", "920_0540"],
-        ["kubelet", "0541", "921_0541"],
-        ["kubelet", "0542", "922_0542"],
-        ["kubelet", "0555", "923_0555"],
-        ["kubelet", "0556", "924_0556"],
-        ["kubelet", "0557", "925_0557"],
-        ["kubelet", "0558", "926_0558"],
-        ["kubelet", "0559", "927_0559"],
-        ["kubelet", "0560", "928_0560"],
+        ["kubelet", "0502", "0502"],
+        ["kubelet", "0503", "0503"],
+        ["kubelet", "0506", "0506"],
+        ["kubelet", "0507", "0507"],
+        ["kubelet", "0508", "0508"],
+        ["kubelet", "0509", "0509"],
+        ["kubelet", "0510", "0510"],
+        ["kubelet", "0511", "0511"],
+        ["kubelet", "0512", "0512"],
+        ["kubelet", "0513", "0513"],
+        ["kubelet", "0515", "0515"],
+        # ["kubelet", "0516", "0516"],
+        ["kubelet", "0518", "0518"],
+        ["kubelet", "0519", "0519"],
+        ["kubelet", "0520", "0520"],
+        ["kubelet", "0521", "0521"],
+        ["kubelet", "0522", "0522"],
+        ["kubelet", "0523", "0523"],
+        ["kubelet", "0540", "0540"],
+        ["kubelet", "0541", "0541"],
+        ["kubelet", "0542", "0542"],
+        ["kubelet", "0555", "0555"],
+        ["kubelet", "0556", "0556"],
+        ["kubelet", "0557", "0557"],
+        ["kubelet", "0558", "0558"],
+        ["kubelet", "0559", "0559"],
+        ["kubelet", "0560", "0560"],
 
         ["kubelet", "0601", "0601"],
         ["kubelet", "0602", "0602"],
@@ -510,12 +514,70 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["kubelet", "0701", "0701"],
         ["kubelet", "0702", "0702"],
 
-        ["crun", "0811", "0811"],
+        # ["crun", "0811", "0811"],
         ["crun", "0812", "0812"],
         # ["crun", "0824", "0824"],
         ["crun", "0828", "0828"],
         ["crun", "0829", "0829"],
         ["crun", "0825", "0825"],
+
+        ["containerd", "0901", "0901"],
+        ["containerd", "0902", "0902"],
+        ["containerd", "0903", "0903"],
+        ["containerd", "0904", "0904"],
+        ["containerd", "0905", "0905"],
+        ["containerd", "0906", "0906"],
+        ["containerd", "0907", "0907"],
+        ["containerd", "0908", "0908"],
+        ["containerd", "0909", "0909"],
+        ["containerd", "0912", "0912"],
+        ["containerd", "0913", "0913"],
+        ["containerd", "0914", "0914"],
+        ["containerd", "0915", "0915"],
+        ["containerd", "0916", "0916"],
+        ["containerd", "0917", "0917"],
+        ["containerd", "0918", "0918"],
+        ["containerd", "0919", "0919"],
+
+        ["containerd", "0920", "0920"],
+        ["containerd", "0921", "0921"],
+        ["containerd", "0922", "0922"],
+        ["containerd", "0923", "0923"],
+        ["containerd", "0924", "0924"],
+        ["containerd", "0925", "0925"],
+        ["containerd", "0926", "0926"],
+        ["containerd", "0927", "0927"],
+        ["containerd", "0928", "0928"],
+        ["containerd", "0929", "0929"],
+        ["containerd", "0930", "0930"],
+        ["containerd", "0931", "0931"],
+        ["containerd", "0932", "0932"],
+        ["containerd", "0933", "0933"],
+        ["containerd", "0934", "0934"],
+        ["containerd", "0935", "0935"],
+        ["containerd", "0936", "0936"],
+        ["containerd", "0937", "0937"],
+        ["containerd", "0938", "0938"],
+
+        ["containerd", "0940", "0940"],
+        ["containerd", "0941", "0941"],
+        ["containerd", "0942", "0942"],
+        ["containerd", "0943", "0943"],
+        ["containerd", "0944", "0944"],
+        ["containerd", "0945", "0945"],
+        ["containerd", "0946", "0946"],
+        ["containerd", "0947", "0947"],
+        ["containerd", "0948", "0948"],
+        ["containerd", "0949", "0949"],
+        ["containerd", "0950", "0950"],
+
+        # vurtual, copied from 40-45 why? same code is executed twice
+        ["containerd", "0980", "0980"],
+        ["containerd", "0981", "0981"],
+        ["containerd", "0982", "0982"],
+        ["containerd", "0983", "0983"],
+        ["containerd", "0984", "0984"],
+        ["containerd", "0985", "0985"],
     
         [None, None, "14_app_start"],  # First print in the application
     ]
@@ -637,33 +699,6 @@ def print_control(config, worker_metrics):
             "12_create_container": "kubelet_applied_sandbox (s)",
             "13_start_container": "kubelet_created_container (s)",
             "14_app_start": "started_application (s)",
-            "901_0502": "kubelet_0502 (s)",
-            "902_0503": "kubelet_0503 (s)",
-            "903_0506": "kubelet_0506 (s)",
-            "904_0507": "kubelet_0507 (s)",
-            "905_0508": "kubelet_0508 (s)",
-            "906_0509": "kubelet_0509 (s)",
-            "907_0510": "kubelet_0510 (s)",
-            "909_0511": "kubelet_0511 (s)",
-            "910_0512": "kubelet_0512 (s)",
-            "911_0513": "kubelet_0513 (s)",
-            "912_0515": "kubelet_0515 (s)",
-            # "913_0516": "kubelet_0516 (s)",
-            "914_0518": "kubelet_0518 (s)",
-            "915_0519": "kubelet_0519 (s)",
-            "916_0520": "kubelet_0520 (s)",
-            "917_0521": "kubelet_0521 (s)",
-            "918_0522": "kubelet_0522 (s)",
-            "919_0523": "kubelet_0523 (s)",
-            "920_0540": "kubelet_0540 (s)",
-            "921_0541": "kubelet_0541 (s)",
-            "922_0542": "kubelet_0542 (s)",
-            "923_0555": "kubelet_0555 (s)",
-            "924_0556": "kubelet_0556 (s)",
-            "925_0557": "kubelet_0557 (s)",
-            "926_0558": "kubelet_0558 (s)",
-            "927_0559": "kubelet_0559 (s)",
-            "928_0560": "kubelet_0560 (s)"
         },
         inplace=True,
     )

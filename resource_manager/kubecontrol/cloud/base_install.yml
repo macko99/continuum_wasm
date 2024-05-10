@@ -34,6 +34,38 @@
         path: /etc/containerd
         state: directory
 
+    - name: Repalce containerd binary with new one
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd"
+        dest: /bin/containerd
+
+    - name: Repalce containerd-shim binary with new one
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim"
+        dest: /bin/containerd-shim
+
+    - name: Repalce containerd-shim-runc-v1 binary with new one
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim-runc-v1"
+        dest: /bin/containerd-shim-runc-v1
+
+    - name: Repalce containerd-shim-runc-v2 binary with new one
+      copy:
+        src: "{{ continuum_home }}/cloud/containerd-shim-runc-v2"
+        dest: /bin/containerd-shim-runc-v2
+    
+    - name: Make new containerd binary executable
+      command: chmod +x /bin/containerd
+
+    - name: Make new containerd-shim binary executable
+      command: chmod +x /bin/containerd-shim
+
+    - name: Make new containerd-shim-runc-v1 binary executable
+      command: chmod +x /bin/containerd-shim-runc-v1
+
+    - name: Make new containerd-shim-runc-v2 binary executable  
+      command: chmod +x /bin/containerd-shim-runc-v2
+
     - name: Copy wasmtime runtime from local to target
       copy:
         src: "{{ continuum_home }}/cloud/containerd-shim-wasmtime-v1"

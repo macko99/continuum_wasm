@@ -16,3 +16,7 @@ scripts/*.pdf
 resource_manager/kubecontrol/cloud/containerd-shim-wasmedge-v1
 resource_manager/kubecontrol/cloud/containerd-shim-wasmer-v1
 resource_manager/kubecontrol/cloud/containerd-shim-wasmtime-v1
+resource_manager/kubecontrol/cloud/containerd
+resource_manager/kubecontrol/cloud/containerd-shim
+resource_manager/kubecontrol/cloud/containerd-shim-runc-v1
+resource_manager/kubecontrol/cloud/containerd-shim-runc-v2
