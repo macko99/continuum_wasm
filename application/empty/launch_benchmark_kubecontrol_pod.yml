@@ -17,7 +17,7 @@
               annotations:
                 module.wasm.image/variant: compat
             spec:
-              # runtimeClassName: wasmedge-rc
+              # runtimeClassName: wasmtime-rc
               containers:
               - name: {{ app_name }}
                 image: {{ image }}

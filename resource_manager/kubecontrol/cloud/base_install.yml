@@ -39,6 +39,11 @@
         src: "{{ continuum_home }}/cloud/containerd"
         dest: /bin/containerd
 
+    - name: Repalce runC binary with new one
+      copy:
+        src: "{{ continuum_home }}/cloud/runc"
+        dest: /usr/bin/runc
+
     - name: Repalce containerd-shim binary with new one
       copy:
         src: "{{ continuum_home }}/cloud/containerd-shim"
@@ -100,6 +105,21 @@
       shell: |
         sudo curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | sudo bash -s -- -p /usr/local
 
+    - name: Install Wasmer
+      shell: |
+        sudo curl https://get.wasmer.io -sSfL | sudo WASMER_DIR=/usr/local sh
+
+    - name : Install Wasmtime
+      shell: |
+        sudo curl https://wasmtime.dev/install.sh -sSf | sudo WASMTIME_HOME=/usr/local bash
+
+    - name: Install Wasmtime c api
+      shell: |
+        wget https://github.com/bytecodealliance/wasmtime/releases/download/v20.0.2/wasmtime-v20.0.2-x86_64-linux-c-api.tar.xz
+        tar -xf wasmtime-v20.0.2-x86_64-linux-c-api.tar.xz
+        sudo cp wasmtime-v20.0.2-x86_64-linux-c-api/lib/* /lib/
+        sudo cp -r wasmtime-v20.0.2-x86_64-linux-c-api/include/* /usr/local/include/
+
     - name: Install prerequsits of crun runtime
       apt:
         name: "{{ packages }}"
@@ -123,12 +143,13 @@
           - python3
           - automake
 
+    # here u can use --with- wasmtime, wasmedge, wasmer
     - name: Install crun runtime
       shell: |
         git clone https://github.com/macko99/crun
         cd crun
         ./autogen.sh
-        ./configure --with-wasmedge
+        ./configure --with-wasmtime
         make
         make install
 

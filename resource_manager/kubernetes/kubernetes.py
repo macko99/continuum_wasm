@@ -1125,7 +1125,7 @@ def get_control_output(config, machines, starttime, status):
     # For worker nodes
     if len(config["cloud_ssh"]) > 1:
         command = """\"sudo su -c \\\"journalctl -u kubelet -u containerd | \
-            grep -i '\[continuum\]' > /var/log/continuum.txt\\\"\""""
+            grep -i '\[continuum\]' > /var/log/continuum.txt && cat /tmp/runc.log >> /var/log/continuum.txt 2>/dev/null\\\"\""""
         results += machines[0].process(config, command, shell=True, ssh=config["cloud_ssh"][1:])
 
     for _, error in results:
@@ -1156,14 +1156,13 @@ def get_control_output(config, machines, starttime, status):
         outputs.append(output)
 
     # Parse output, filter per component, get timestamp and custom output
-    components = ["kubelet", "scheduler", "apiserver", "proxy", "controller-manager", "crun", "containerd"]
+    components = ["kubelet", "scheduler", "apiserver", "proxy", "controller-manager", "crun", "containerd", "runc"]
     parsed = {}
 
     printOut=False
 
     dict_id_to_name = {}
     dict_id_to_pod = {}
-    # dict_pod_to_container = {}
 
     for ssh, output in zip(config["cloud_ssh"], outputs):
         name = ssh.split("@")[0]
@@ -1200,42 +1199,50 @@ def get_control_output(config, machines, starttime, status):
                 container = entry[1].split("container=")[1].split(" ")[0]
                 pod = entry[1].split("pod=")[1].split(" ")[0]
                 dict_id_to_name[id] = [container, pod]
-                # dict_pod_to_container[pod] = container
                 entry[1] = entry[1].split(" id=")[0]
-                # if printOut:
-                #     logging.debug("### [CONTINUUM] DEBUG ###: id %s -> container %s -> pod %s", id, container, pod)
+                if printOut:
+                    logging.debug("### [CONTINUUM] DEBUG ###: id %s -> container %s -> pod %s", id, container, pod)
         
         # 0635 createPodSandbox:RunPodSandbox:done pod=%s sandbox=%s
         for entry in parsed[name]["kubelet"]:
             if entry[1].startswith("0635") and "pod=" in entry[1] and "sandbox=" in entry[1]:
-                if printOut:
-                    logging.debug("#DEBUG: line: %s", entry[1])
                 sandbox = entry[1].split("sandbox=")[1]
                 pod = entry[1].split("pod=")[1].split(" ")[0]
                 dict_id_to_pod[sandbox] = pod
                 entry[1] = entry[1].split(" sandbox=")[0]
-                # if printOut:
-                #     logging.debug("### [CONTINUUM] DEBUG ###: sandbox %s -> pod %s", sandbox, pod)
+                if printOut:
+                    logging.debug("### [CONTINUUM] DEBUG ###: sandbox %s -> pod %s", sandbox, pod)
 
         # 0811 libcrun_container_create:start id=
-        for entry in parsed[name]["crun"]:
-            if entry[1].startswith("08") and "id=" in entry[1]:
-                id = entry[1].split("id=")[1]
-                if id in dict_id_to_name:
-                    container = dict_id_to_name[id][0]
-                    pod = dict_id_to_name[id][1]
-                    entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
-                    if printOut:
-                        logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
-                else:
-                    parsed[name]["crun"].remove(entry)
+        if "crun" in parsed[name]:
+            for entry in parsed[name]["crun"]:
+                if entry[1].startswith("08") and "id=" in entry[1]:
+                    id = entry[1].split("id=")[1]
+                    if id in dict_id_to_name:
+                        container = dict_id_to_name[id][0]
+                        pod = dict_id_to_name[id][1]
+                        entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
+                        if printOut:
+                            logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
+                    else:
+                        parsed[name]["crun"].remove(entry)
+        elif "runc" in parsed[name]:
+            for entry in parsed[name]["runc"]:
+                if entry[1].startswith("08") and "id=" in entry[1]:
+                    id = entry[1].split("id=")[1]
+                    if id in dict_id_to_name:
+                        container = dict_id_to_name[id][0]
+                        pod = dict_id_to_name[id][1]
+                        entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
+                        if printOut:
+                            logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
+                    else:
+                        parsed[name]["runc"].remove(entry)
 
         # 09xx libcrun_container_create:start sandbox= sth=
         # 0946 containerd:client:StartContainer:start sandbox=9e406a83cc15620ab14cc99c4643f5b4fed6a13935ce51250e6079d945c96bc4
         for entry in parsed[name]["containerd"]:
             if entry[1].startswith("09") and "sandbox=" in entry[1]:
-                if printOut and entry[1].startswith("0946"):
-                    logging.debug("#DEBUG 0946: line: %s", entry[1])
                 sandbox = entry[1].split("sandbox=")[1].split(" ")[0]
                 if sandbox in dict_id_to_pod:
                     pod = dict_id_to_pod[sandbox]
@@ -1248,6 +1255,9 @@ def get_control_output(config, machines, starttime, status):
                     if entry[1][:4] in ["0940", "0941", "0942", "0943", "0944", "0945"]:
                         # replace first 3 characters with 098
                         entry[1] = "098" + entry[1][3:]
+                    if entry[1][:4] in ["0964", "0965", "0966", "0967", "0968", "0969"]:
+                        # replace first 3 characters with 098
+                        entry[1] = "099" + entry[1][3:]
                     entry[1] = entry[1].split("sandbox=")[0] + "pod=" + pod + " container=" + container
                     if printOut:
                         logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
@@ -1304,6 +1314,9 @@ def parse_custom_kubernetes_splits(line, printOut=False):
 
         # Example: "%!s(int64=1679583342891810186)"
         time_str = line_split[index - 1]
+        if 'msg="' in time_str:
+            time_str = time_str.split('msg="')[1]
+            line = line[:-1]
         time_str = time_str.split("=")[1][:-1]
         time_obj_nano = float(time_str)
         time_obj = time_obj_nano / 10**9
@@ -1311,9 +1324,8 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
-    if printOut and ("[CONTINUUM] 0635" in line or "[CONTINUUM] 0645" in line or "[CONTINUUM] 094" in line):
+    if printOut and ("[CONTINUUM] 08" in line or "[CONTINUUM] 097" in line):
         logging.info("### [CONTINUUM] DEBUG ###: %s", line.split("[CONTINUUM] ")[1])
-        # line = "REMOVE"
         
     line = line.split("[CONTINUUM] ")[1]
     return time_obj, line

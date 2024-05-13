@@ -300,7 +300,7 @@ def check(
 
     # Only the kubelet component is on worker nodes, all other components are in the controlplane
     is_controlplane = True
-    if component in ["kubelet", "crun", "containerd"]:
+    if component in ["kubelet", "crun", "containerd", "runc"]:
         is_controlplane = False
 
     i = 0
@@ -578,6 +578,37 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["containerd", "0983", "0983"],
         ["containerd", "0984", "0984"],
         ["containerd", "0985", "0985"],
+
+        # ["containerd", "0960", "0960"],
+        # ["containerd", "0961", "0961"],
+        # ["containerd", "0962", "0962"],
+        # ["containerd", "0963", "0963"],
+        ["containerd", "0964", "0964"],
+        ["containerd", "0965", "0965"],
+        ["containerd", "0966", "0966"],
+        ["containerd", "0967", "0967"],
+        ["containerd", "0968", "0968"],
+        ["containerd", "0969", "0969"],
+
+        # vurtual, copied from 64-69 why? same code is executed twice
+        ["containerd", "0994", "0994"],
+        ["containerd", "0995", "0995"],
+        ["containerd", "0996", "0996"],
+        ["containerd", "0997", "0997"],
+        ["containerd", "0998", "0998"],
+        ["containerd", "0999", "0999"],
+
+        # ["runc", "0850", "0850"],
+        # ["runc", "0851", "0851"],
+        # ["runc", "0852", "0852"],
+        # ["runc", "0853", "0853"],
+        # ["runc", "0854", "0854"],
+        # ["runc", "0855", "0855"],
+        # ["runc", "0856", "0856"],
+        # ["runc", "0857", "0857"],
+        # ["runc", "0858", "0858"],
+        # ["runc", "0859", "0859"],
+        # ["runc", "0860", "0860"],
     
         [None, None, "14_app_start"],  # First print in the application
     ]

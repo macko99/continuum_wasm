@@ -20,3 +20,4 @@ resource_manager/kubecontrol/cloud/containerd
 resource_manager/kubecontrol/cloud/containerd-shim
 resource_manager/kubecontrol/cloud/containerd-shim-runc-v1
 resource_manager/kubecontrol/cloud/containerd-shim-runc-v2
+resource_manager/kubecontrol/cloud/runc
