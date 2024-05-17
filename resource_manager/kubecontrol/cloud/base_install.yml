@@ -149,7 +149,7 @@
         git clone https://github.com/macko99/crun
         cd crun
         ./autogen.sh
-        ./configure --with-wasmtime
+        ./configure --with-wasmedge
         make
         make install
 
