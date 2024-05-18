@@ -1125,7 +1125,8 @@ def get_control_output(config, machines, starttime, status):
     # For worker nodes
     if len(config["cloud_ssh"]) > 1:
         command = """\"sudo su -c \\\"journalctl -u kubelet -u containerd | \
-            grep -i '\[continuum\]' > /var/log/continuum.txt && cat /tmp/runc.log >> /var/log/continuum.txt 2>/dev/null\\\"\""""
+            grep -i '\[continuum\]' > /var/log/continuum.txt && cat /tmp/containerd.log 2>/dev/null | grep -i '\[continuum\]' >> /var/log/continuum.txt && \
+                cat /tmp/runc.log 2>/dev/null | grep -i '\[continuum\]' >> /var/log/continuum.txt\\\"\""""
         results += machines[0].process(config, command, shell=True, ssh=config["cloud_ssh"][1:])
 
     for _, error in results:
@@ -1185,7 +1186,7 @@ def get_control_output(config, machines, starttime, status):
             if comp not in parsed[name]:
                 parsed[name][comp] = []
 
-            time_obj, line = parse_custom_kubernetes_splits(line, printOut=printOut)
+            time_obj, line = parse_custom_kubernetes_splits(line, printOut=False)
             if time_obj is False:
                 logging.debug("Couldn't properly parse line: %s", line)
                 continue
@@ -1193,80 +1194,90 @@ def get_control_output(config, machines, starttime, status):
             parsed[name][comp].append([time_obj, line])
         
         # 0645 startContainer:CreateContainer:done pod=%s container=%s id=%s
-        for entry in parsed[name]["kubelet"]:
-            if entry[1].startswith("0645") and "id=" in entry[1] and "container=" in entry[1] and "pod=" in entry[1]:
-                id = entry[1].split("id=")[1]
-                container = entry[1].split("container=")[1].split(" ")[0]
-                pod = entry[1].split("pod=")[1].split(" ")[0]
-                dict_id_to_name[id] = [container, pod]
-                entry[1] = entry[1].split(" id=")[0]
-                if printOut:
-                    logging.debug("### [CONTINUUM] DEBUG ###: id %s -> container %s -> pod %s", id, container, pod)
+        if "kubelet" in parsed[name]:
+            for entry in parsed[name]["kubelet"]:
+                if entry[1].startswith("0645") and "id=" in entry[1] and "container=" in entry[1] and "pod=" in entry[1]:
+                    id = entry[1].split("id=")[1]
+                    container = entry[1].split("container=")[1].split(" ")[0]
+                    pod = entry[1].split("pod=")[1].split(" ")[0]
+                    dict_id_to_name[id] = [container, pod]
+                    entry[1] = entry[1].split(" id=")[0]
+                    if printOut:
+                        logging.debug("### [CONTINUUM] DEBUG ###: id %s -> container %s -> pod %s", id, container, pod)
         
-        # 0635 createPodSandbox:RunPodSandbox:done pod=%s sandbox=%s
-        for entry in parsed[name]["kubelet"]:
-            if entry[1].startswith("0635") and "pod=" in entry[1] and "sandbox=" in entry[1]:
-                sandbox = entry[1].split("sandbox=")[1]
-                pod = entry[1].split("pod=")[1].split(" ")[0]
-                dict_id_to_pod[sandbox] = pod
-                entry[1] = entry[1].split(" sandbox=")[0]
-                if printOut:
-                    logging.debug("### [CONTINUUM] DEBUG ###: sandbox %s -> pod %s", sandbox, pod)
+            # 0635 createPodSandbox:RunPodSandbox:done pod=%s sandbox=%s
+            for entry in parsed[name]["kubelet"]:
+                if entry[1].startswith("0635") and "pod=" in entry[1] and "sandbox=" in entry[1]:
+                    sandbox = entry[1].split("sandbox=")[1]
+                    pod = entry[1].split("pod=")[1].split(" ")[0]
+                    dict_id_to_pod[sandbox] = pod
+                    entry[1] = entry[1].split(" sandbox=")[0]
+                    if printOut:
+                        logging.debug("### [CONTINUUM] DEBUG ###: sandbox %s -> pod %s", sandbox, pod)
 
-        # 0811 libcrun_container_create:start id=
-        if "crun" in parsed[name]:
-            for entry in parsed[name]["crun"]:
-                if entry[1].startswith("08") and "id=" in entry[1]:
-                    id = entry[1].split("id=")[1]
-                    if id in dict_id_to_name:
-                        container = dict_id_to_name[id][0]
-                        pod = dict_id_to_name[id][1]
-                        entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
-                        if printOut:
-                            logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
-                    else:
-                        parsed[name]["crun"].remove(entry)
-        elif "runc" in parsed[name]:
-            for entry in parsed[name]["runc"]:
-                if entry[1].startswith("08") and "id=" in entry[1]:
-                    id = entry[1].split("id=")[1]
-                    if id in dict_id_to_name:
-                        container = dict_id_to_name[id][0]
-                        pod = dict_id_to_name[id][1]
-                        entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
-                        if printOut:
-                            logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
-                    else:
-                        parsed[name]["runc"].remove(entry)
+            # 0811 libcrun_container_create:start id=
+            if "crun" in parsed[name]:
+                for entry in parsed[name]["crun"]:
+                    if entry[1].startswith("08") and "id=" in entry[1]:
+                        id = entry[1].split("id=")[1]
+                        if id in dict_id_to_name:
+                            container = dict_id_to_name[id][0]
+                            pod = dict_id_to_name[id][1]
+                            entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
+                        else:
+                            parsed[name]["crun"].remove(entry)
+            elif "runc" in parsed[name]:
+                for entry in parsed[name]["runc"]:
+                    if entry[1].startswith("08") and "id=" in entry[1]:
+                        id = entry[1].split("id=")[1]
+                        if id in dict_id_to_name:
+                            container = dict_id_to_name[id][0]
+                            pod = dict_id_to_name[id][1]
+                            entry[1] = entry[1].split("id=")[0] + "pod=" + pod + " container=" + container 
+                        else:
+                            parsed[name]["runc"].remove(entry)
 
-        # 09xx libcrun_container_create:start sandbox= sth=
-        # 0946 containerd:client:StartContainer:start sandbox=9e406a83cc15620ab14cc99c4643f5b4fed6a13935ce51250e6079d945c96bc4
-        for entry in parsed[name]["containerd"]:
-            if entry[1].startswith("09") and "sandbox=" in entry[1]:
-                sandbox = entry[1].split("sandbox=")[1].split(" ")[0]
-                if sandbox in dict_id_to_pod:
-                    pod = dict_id_to_pod[sandbox]
-                    entry[1] = entry[1].split("sandbox=")[0] + "pod=" + pod# + " container=" + container 
-                    if printOut:
-                        logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
-                elif sandbox in dict_id_to_name:
-                    container = dict_id_to_name[sandbox][0]
-                    pod = dict_id_to_name[sandbox][1]
-                    if entry[1][:4] in ["0940", "0941", "0942", "0943", "0944", "0945"]:
-                        # replace first 3 characters with 098
-                        entry[1] = "098" + entry[1][3:]
-                    if entry[1][:4] in ["0964", "0965", "0966", "0967", "0968", "0969"]:
-                        # replace first 3 characters with 098
-                        entry[1] = "099" + entry[1][3:]
-                    entry[1] = entry[1].split("sandbox=")[0] + "pod=" + pod + " container=" + container
-                    if printOut:
-                        logging.debug("### [CONTINUUM] DEBUG ### NEW: %s", entry[1])
-                else:
-                    if printOut:
-                        logging.debug("### [CONTINUUM] DEBUG ###: Sandbox %s not found in dict", sandbox)
-                    # parsed[name]["containerd"].remove(entry)
-            else:
-                parsed[name]["containerd"].remove(entry)
+            # 09xx libcrun_container_create:start sandbox= sth=
+            # 0946 containerd:client:StartContainer:start sandbox=9e406a83cc15620ab14cc99c4643f5b4fed6a13935ce51250e6079d945c96bc4
+            if "containerd" in parsed[name]:
+                for entry in parsed[name]["containerd"]:
+                    if entry[1].startswith("09") and "sandbox=" in entry[1]:
+                        sandbox = entry[1].split("sandbox=")[1].split(" ")[0]
+                        if sandbox in dict_id_to_pod:
+                            pod = dict_id_to_pod[sandbox]
+                            entry[1] = entry[1].split("sandbox=")[0] + "pod=" + pod
+                        elif sandbox in dict_id_to_name:
+                            container = dict_id_to_name[sandbox][0]
+                            pod = dict_id_to_name[sandbox][1]
+                            if entry[1][:4] in ["0940", "0941", "0942", "0943", "0944", "0945"]:
+                                # replace first 3 characters with 098
+                                entry[1] = "098" + entry[1][3:]
+                            if entry[1][:4] in ["0964", "0965", "0966", "0967", "0968", "0969"]:
+                                # replace first 3 characters with 098
+                                entry[1] = "099" + entry[1][3:]
+                            entry[1] = entry[1].split("sandbox=")[0] + "pod=" + pod + " container=" + container
+                
+                #0033 shimTask:Create:done context=15eda8c58e7adc0b0e1680c8898f30183410f14f61800e85c027e05b382025c6
+                for entry in parsed[name]["containerd"]:                
+                    if entry[1].startswith("00") and "context=" in entry[1]:
+                        id = entry[1].split("context=")[1]
+                        if id in dict_id_to_pod:
+                            pod = dict_id_to_pod[id]
+                            entry[1] = entry[1].split("context=")[0] + "pod=" + pod
+                        elif id in dict_id_to_name:
+                            container = dict_id_to_name[id][0]
+                            pod = dict_id_to_name[id][1]
+                            if entry[1][:4] in ["0033", "0034", "0035", "0038", "0039"]:
+                                # replace first 3 characters with 004
+                                entry[1] = "004" + entry[1][3:]
+                            if entry[1][:4] in ["0040", "0041"]:
+                                # replace first 3 characters with 005
+                                entry[1] = "005" + entry[1][3:]
+                            entry[1] = entry[1].split("context=")[0] + "pod=" + pod + " container=" + container 
+                        else:
+                            if printOut:
+                                logging.debug("### [CONTINUUM] DEBUG ###: not found in dict, %s", line)
+                            parsed[name]["containerd"].remove(entry)
                 
     # Now filter out everything before starttime and after endtime
     # Starttime and endtime are both in 192031029309.1230910293 format
@@ -1316,7 +1327,10 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         time_str = line_split[index - 1]
         if 'msg="' in time_str:
             time_str = time_str.split('msg="')[1]
-            line = line[:-1]
+            if '" runtime=' in line:
+                line = line.split('" runtime=')[0]
+            else:
+                line = line[:-1]
         time_str = time_str.split("=")[1][:-1]
         time_obj_nano = float(time_str)
         time_obj = time_obj_nano / 10**9
@@ -1324,7 +1338,7 @@ def parse_custom_kubernetes_splits(line, printOut=False):
         logging.debug("[WARNING][%s] Could not parse line: %s", str(e), line)
         return False, False
 
-    if printOut and ("[CONTINUUM] 08" in line or "[CONTINUUM] 097" in line):
+    if printOut and ("[CONTINUUM] 00" in line):
         logging.info("### [CONTINUUM] DEBUG ###: %s", line.split("[CONTINUUM] ")[1])
         
     line = line.split("[CONTINUUM] ")[1]

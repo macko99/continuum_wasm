@@ -525,6 +525,23 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         # "0858",
         # "0859",
         # "0860",
+
+        # "0031",
+        "0033",
+        # "0034",
+        # "0035",
+        "0038",
+        "0039",
+        # "0040",
+        "0041",
+
+        "0043",
+        # "0044",
+        # "0045",
+        "0048",
+        "0049",
+        # "0050",
+        "0051",
         ]
     ]
 
@@ -697,10 +714,26 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         "0854" : ["0854:done", "#cc3300"],
         "0855" : ["0855:done", "#ffcc99"],
         "0856" : ["0856:done", "#336600"],
-        # "0857" : ["0857:done", "#cc0033"],
+        "0857" : ["0857:done", "#cc0033"],
         "0858" : ["0858:done", "#19BB93"],
         "0859" : ["0859:done", "#AFBE00"],
         "0860" : ["0860:done", "#53EE46"],
+
+        "0033": ["0033: shimTask:Create:done", "#99ccff"],
+        "0034": ["0034", "#1aa3ff"],
+        "0035": ["0035", "#EFFF31"],
+        "0038": ["0038: container:NewContainer:start", "#EFFF31"],
+        "0039": ["0039: container:NewContainer:done", "#B3BF6F"],
+        "0040": ["0040", "#336600"],
+        "0041": ["0041: container:process:Start:done", "#993333"],
+
+        "0043": ["0043: shimTask:Create:done", "#99ccff"],
+        "0044": ["0044", "#1aa3ff"],
+        "0045": ["0045", "#EFFF31"],
+        "0048": ["0048: container:NewContainer:start", "#EFFF31"],
+        "0049": ["0049: container:NewContainer:done", "#B3BF6F"],
+        "0050": ["0050", "#336600"],
+        "0051": ["0051: container:process:Start:done", "#993333"],
     }
     used_colors = {}
 

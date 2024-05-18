@@ -134,7 +134,7 @@ def format_output(
             worker_metrics = fill_control(
                 config, control, starttime, worker_output, worker_description
             )
-            df = print_control(config, worker_metrics)
+            df = print_control(config, worker_metrics, printOut=False)
             df_resources = print_resources(config, resource_output)
             validate_data(df)
             plot.plot_control(df, config["timestamp"])
@@ -359,8 +359,6 @@ def check(
                                 metric[tag] = time_delta(t, starttime)
                                 i += 1
                     elif "pod=" in line:
-                        if tag == "0901":
-                            logging.debug("[CONTINUUM] DEBUG Found 0901 in %s", line)
                         # Add to correct pod
                         pod = line.strip().split("pod=")[1]
                         if "default/" in pod:
@@ -372,8 +370,6 @@ def check(
                             if metric["pod"] == pod and metric[tag] is None:
                                 metric[tag] = time_delta(t, starttime)
                                 i += 1
-                                if tag == "0901":
-                                    logging.debug("[CONTINUUM] DEBUG i++")
                     elif "container=" in line:
                         # Add to correct container
                         container = line.strip().split("container=default/")[1]
@@ -609,6 +605,24 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         # ["runc", "0858", "0858"],
         # ["runc", "0859", "0859"],
         # ["runc", "0860", "0860"],
+
+        # ["containerd", "0031", "0031"],
+        ["containerd", "0033", "0033"],
+        ["containerd", "0034", "0034"],
+        ["containerd", "0035", "0035"],
+        ["containerd", "0038", "0038"],
+        ["containerd", "0039", "0039"],
+        ["containerd", "0040", "0040"],
+        ["containerd", "0041", "0041"],
+
+        # vurtual, copied from 33-41 why? same code is executed twice
+        ["containerd", "0043", "0043"],
+        ["containerd", "0044", "0044"],
+        ["containerd", "0045", "0045"],
+        ["containerd", "0048", "0048"],
+        ["containerd", "0049", "0049"],
+        ["containerd", "0050", "0050"],
+        ["containerd", "0051", "0051"],
     
         [None, None, "14_app_start"],  # First print in the application
     ]
@@ -697,7 +711,7 @@ def fill_control(config, control, starttime, worker_output, worker_description):
     return worker_metrics
 
 
-def print_control(config, worker_metrics):
+def print_control(config, worker_metrics, printOut=False):
     """Print controlplane data from the source code
 
     Args:
@@ -735,8 +749,9 @@ def print_control(config, worker_metrics):
     )
     df = df.sort_values(by=["started_application (s)"])
 
-    df_no_indices = df.to_string(index=False)
-    logging.info("\n%s", df_no_indices)
+    if printOut:
+        df_no_indices = df.to_string(index=False)
+        logging.info("\n%s", df_no_indices)
 
     # Print ouput in csv format
     logging.debug("Output in csv format\n%s", repr(df.to_csv()))
