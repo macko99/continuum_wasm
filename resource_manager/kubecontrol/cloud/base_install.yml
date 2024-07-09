@@ -120,6 +120,31 @@
         sudo cp wasmtime-v20.0.2-x86_64-linux-c-api/lib/* /lib/
         sudo cp -r wasmtime-v20.0.2-x86_64-linux-c-api/include/* /usr/local/include/
 
+    - name: Install WAMR prerequisites
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: true
+      vars:
+        packages:
+          - build-essential
+          - cmake
+          - g++-multilib
+          - libgcc-9-dev
+          - lib32gcc-9-dev
+          - ccache
+    
+    - name: Install WAMR
+      shell: |
+        git clone https://github.com/macko99/wasm-micro-runtime
+        cd wasm-micro-runtime/product-mini/platforms/linux
+        mkdir build && cd build
+        cmake ..
+        make
+        sudo make install
+        cp ../../../../core/iwasm/include/* /usr/local/include/
+        ldconfig
+
     - name: Install prerequsits of crun runtime
       apt:
         name: "{{ packages }}"
@@ -148,8 +173,9 @@
       shell: |
         git clone https://github.com/macko99/crun
         cd crun
+        git switch wamr
         ./autogen.sh
-        ./configure --with-wasmedge
+        ./configure --with-wamr
         make
         make install
 
