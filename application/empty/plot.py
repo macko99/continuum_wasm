@@ -475,9 +475,9 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         # "0932",
         # "0933",
         # "0934",
-        "0935",
-        "0936",
-        "0937",
+        # "0935",
+        # "0936",
+        # "0937",
         # "0938",
 
         # "0940",
@@ -804,7 +804,7 @@ def plot_resources(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None
         ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
     """
     plot_resources_kube(df[0], timestamp, xmax, ymax, xinter, yinter)
-    plot_resources_os(df[1], timestamp, xmax, ymax, xinter, yinter)
+    plot_resources_os(df[1], timestamp, xmax + 100.0, ymax, xinter, yinter)
 
 
 def plot_resources_kube(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None):

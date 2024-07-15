@@ -136,8 +136,10 @@
     
     - name: Install WAMR
       shell: |
-        git clone https://github.com/macko99/wasm-micro-runtime
-        cd wasm-micro-runtime/product-mini/platforms/linux
+        git clone https://github.com/macko99/wasm-micro-runtime.git
+        cd wasm-micro-runtime
+        git checkout master
+        cd product-mini/platforms/linux
         mkdir build && cd build
         cmake ..
         make
@@ -173,7 +175,7 @@
       shell: |
         git clone https://github.com/macko99/crun
         cd crun
-        git switch wamr
+        git switch wamr2
         ./autogen.sh
         ./configure --with-wamr
         make

@@ -1453,7 +1453,7 @@ def filter_metrics_kube(config, starttime, endtime):
 
     # Take 1.0 second more on both ends so we can plot the t=0 and t=endtime points
     df_filtered = df.loc[
-        (df["timestamp"] > (starttime - 1.0)) & (df["timestamp"] < (endtime + 1.0))
+        (df["timestamp"] > (starttime - 1.0)) & (df["timestamp"] < (endtime + 100.0))
     ]
     df_filtered["timestamp"] -= starttime
     return df_filtered
@@ -1482,7 +1482,7 @@ def filter_metrics_os(config, starttime, endtime):
         df["timestamp"] = df["timestamp"] / 10**9
 
         df_filtered = df.loc[
-            (df["timestamp"] > (starttime - 1.0)) & (df["timestamp"] < (endtime + 1.0))
+            (df["timestamp"] > (starttime - 1.0)) & (df["timestamp"] < (endtime + 100.0))
         ]
         df_filtered["timestamp"] -= starttime
         df_filtered.rename(

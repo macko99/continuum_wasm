@@ -16,6 +16,9 @@
               annotations:
                 module.wasm.image/variant: compat
             spec:
+              hostNetwork: true
+              hostIPC: true
+              hostPID: true
               restartPolicy: Never
               # runtimeClassName: wasmedge-rc
               containers:

@@ -17,6 +17,9 @@
               annotations:
                 module.wasm.image/variant: compat
             spec:
+              hostNetwork: true
+              hostIPC: true
+              hostPID: true
               # runtimeClassName: wasmedge-rc
               containers:
               - name: {{ app_name }}
@@ -26,6 +29,8 @@
                   requests:
                     memory: "{{ memory_req }}Mi"
                     cpu: {{ cpu_req }}
+                # securityContext:
+                #   privileged: true
                 env:
                 - name: SLEEP_TIME
                   value: "{{ sleep_time }}"
