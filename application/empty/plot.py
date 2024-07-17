@@ -530,18 +530,18 @@ def plot_p57(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None, widt
         "0033",
         # "0034",
         # "0035",
-        "0038",
-        "0039",
-        # "0040",
-        "0041",
+        # "0038",
+        # "0039",
+        # # "0040",
+        # "0041",
 
-        "0043",
-        # "0044",
-        # "0045",
-        "0048",
-        "0049",
-        # "0050",
-        "0051",
+        # "0043",
+        # # "0044",
+        # # "0045",
+        # "0048",
+        # "0049",
+        # # "0050",
+        # "0051",
         ]
     ]
 
@@ -803,7 +803,7 @@ def plot_resources(df, timestamp, xmax=None, ymax=None, xinter=None, yinter=None
         xmax (bool): Optional. Set the xmax of the plot by hand. Defaults to None.
         ymax (bool): Optional. Set the ymax of the plot by hand. Defaults to None.
     """
-    plot_resources_kube(df[0], timestamp, xmax, ymax, xinter, yinter)
+    plot_resources_kube(df[0], timestamp, xmax + 100.0, ymax, xinter, yinter)
     plot_resources_os(df[1], timestamp, xmax + 100.0, ymax, xinter, yinter)
 
 
@@ -839,7 +839,7 @@ def plot_resources_kube(df, timestamp, xmax=None, ymax=None, xinter=None, yinter
     # Set x axis details
     ax1.set_xlabel("Time (s)")
     x_max = df["Time (s)"].values.max()
-    if ymax:
+    if xmax:
         x_max = xmax
 
     ax1.set_xlim(0, x_max)
@@ -879,7 +879,7 @@ def plot_resources_kube(df, timestamp, xmax=None, ymax=None, xinter=None, yinter
     # Set x axis details
     ax1.set_xlabel("Time (s)")
     x_max = df["Time (s)"].values.max()
-    if ymax:
+    if xmax:
         x_max = xmax
 
     ax1.set_xlim(0, x_max)

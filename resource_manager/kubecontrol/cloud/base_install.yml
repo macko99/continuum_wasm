@@ -97,6 +97,7 @@
 
     - name: Copy containerd config from local to target
       copy:
+        # MKB1 - crun vs runC
         # src: "{{ continuum_home }}/cloud/config.toml"
         src: "{{ continuum_home }}/cloud/config_crun.toml"
         dest: /etc/containerd/config.toml
@@ -138,6 +139,7 @@
       shell: |
         git clone https://github.com/macko99/wasm-micro-runtime.git
         cd wasm-micro-runtime
+        # MKB1 - branch
         git checkout master
         cd product-mini/platforms/linux
         mkdir build && cd build
@@ -175,8 +177,13 @@
       shell: |
         git clone https://github.com/macko99/crun
         cd crun
+        # MKB1 - branch
         git switch wamr2
         ./autogen.sh
+        # MKB1 - runtime
+        # ./configure --with-wasmedge
+        # ./configure --with-wasmtime
+        # ./configure --with-wasmer
         ./configure --with-wamr
         make
         make install

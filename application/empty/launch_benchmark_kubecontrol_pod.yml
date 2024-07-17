@@ -14,12 +14,17 @@
           template:
             metadata:
               name: {{ app_name }}
+              # MKB1 - crun + wasm
               annotations:
                 module.wasm.image/variant: compat
             spec:
-              hostNetwork: true
-              hostIPC: true
-              hostPID: true
+              # MKB1 - use host namesapces?
+              # hostNetwork: true
+              # hostIPC: true
+              # hostPID: true
+              # MKB1 - runwasi shim
+              runtimeClassName: wasmtime-rc
+              # runtimeClassName: wasmer-rc
               # runtimeClassName: wasmedge-rc
               containers:
               - name: {{ app_name }}

@@ -17,6 +17,7 @@ def set_container_location(config):
     Args:
         config (dict): Parsed configuration
     """
+    # MKB1
     source = "macko99vu/wasmrust"
     # source = "macko99vu/wasmgo"
     # source = "macko99vu/pythonbase"
@@ -610,19 +611,19 @@ def fill_control(config, control, starttime, worker_output, worker_description):
         ["containerd", "0033", "0033"],
         ["containerd", "0034", "0034"],
         ["containerd", "0035", "0035"],
-        ["containerd", "0038", "0038"],
-        ["containerd", "0039", "0039"],
-        ["containerd", "0040", "0040"],
-        ["containerd", "0041", "0041"],
+        # ["containerd", "0038", "0038"],
+        # ["containerd", "0039", "0039"],
+        # ["containerd", "0040", "0040"],
+        # ["containerd", "0041", "0041"],
 
         # vurtual, copied from 33-41 why? same code is executed twice
-        ["containerd", "0043", "0043"],
-        ["containerd", "0044", "0044"],
-        ["containerd", "0045", "0045"],
-        ["containerd", "0048", "0048"],
-        ["containerd", "0049", "0049"],
-        ["containerd", "0050", "0050"],
-        ["containerd", "0051", "0051"],
+        # ["containerd", "0043", "0043"],
+        # ["containerd", "0044", "0044"],
+        # ["containerd", "0045", "0045"],
+        # ["containerd", "0048", "0048"],
+        # ["containerd", "0049", "0049"],
+        # ["containerd", "0050", "0050"],
+        # ["containerd", "0051", "0051"],
     
         [None, None, "14_app_start"],  # First print in the application
     ]
