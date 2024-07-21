@@ -19,11 +19,11 @@
                 module.wasm.image/variant: compat
             spec:
               # MKB1 - use host namesapces?
-              # hostNetwork: true
-              # hostIPC: true
-              # hostPID: true
+              hostNetwork: true
+              hostIPC: true
+              hostPID: true
               # MKB1 - runwasi shim
-              runtimeClassName: wasmtime-rc
+              # runtimeClassName: wasmtime-rc
               # runtimeClassName: wasmer-rc
               # runtimeClassName: wasmedge-rc
               containers:
