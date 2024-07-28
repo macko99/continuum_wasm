@@ -1,3 +1,9 @@
 containerd-shim-wasmtime-v1 filter=lfs diff=lfs merge=lfs -text
 containerd-shim-wasmer-v1 filter=lfs diff=lfs merge=lfs -text
 containerd-shim-wasmedge-v1 filter=lfs diff=lfs merge=lfs -text
+containerd filter=lfs diff=lfs merge=lfs -text
+containerd-shim filter=lfs diff=lfs merge=lfs -text
+containerd-shim-runc-v1 filter=lfs diff=lfs merge=lfs -text
+containerd-shim-runc-v2 filter=lfs diff=lfs merge=lfs -text
+runc filter=lfs diff=lfs merge=lfs -text
+kubernetes-node-linux-amd64-v1270.tar.gz filter=lfs diff=lfs merge=lfs -text

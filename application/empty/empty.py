@@ -17,9 +17,10 @@ def set_container_location(config):
     Args:
         config (dict): Parsed configuration
     """
-    # MKB1
+    # -----------------------------------
+    # MKB1 - use pythonbase image to run Pyhton containers, otherwise use wasmrust
+    # -----------------------------------
     source = "macko99vu/wasmrust"
-    # source = "macko99vu/wasmgo"
     # source = "macko99vu/pythonbase"
     config["images"] = {"worker": "%s:latest" % (source)}
 
